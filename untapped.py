@@ -3,7 +3,8 @@
     Author: Micah Hoffman (@WebBreacher)
     Purpose: To look up a user on Untappd and provide drinking profile
     TODO -
-        1 - These pages only show so much without authentication
+        1 - These pages only show so much without authentication.
+        	Auth then pass cookies? Then page every 25 records? (See Burp)
 '''
 
 import argparse
@@ -18,13 +19,15 @@ import urllib2
 # Parse command line input
 parser = argparse.ArgumentParser(description="Grab Untappd user activity")
 parser.add_argument('-u', '--user', required=True, help='Username to research')
-parser.add_argument('-o', '--outfile', help='[OPTIONAL] Output file for all content')
+#parser.add_argument('-o', '--outfile', help='[OPTIONAL] Output file for all content')
 args = parser.parse_args()
 
 def GetDataFromUntappd(url):
     # Setting up and Making the Web Call
     try:
-        req = urllib2.Request(url, headers={ 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36' })
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36'
+        headers = {'User-Agent': user_agent}
+        req = urllib2.Request(url, headers)
         response = urllib2.urlopen(req, timeout=20)
         print '[+]     Response from Untappd received'
         return response
