@@ -124,13 +124,82 @@ if when:
         hours_of_day.append(hours_min_sec[0])
 
         #print '[+]     %s' % beer_date_time
-    for d in days_of_week:
-        print d, days_of_week[d]*'|"'
+    sun = days_of_week.count('Sun')
+    mon = days_of_week.count('Mon')
+    tue = days_of_week.count('Tue')
+    wed = days_of_week.count('Wed')
+    thu = days_of_week.count('Thu')
+    fri = days_of_week.count('Fri')
+    sat = days_of_week.count('Sat')
+
+    print '[*]  Drinking Patterns (Last 25 beers) - Days of Week'
+    print '         Day (#) : HISTOGRAM'
+    print '        ---------------------------------'
+    print '         Mon (%s) : %s' % (mon, mon*'x')
+    print '         Tue (%s) : %s' % (tue, tue*'x')
+    print '         Wed (%s) : %s' % (wed, wed*'x')
+    print '         Thu (%s) : %s' % (thu, thu*'x')
+    print '         Fri (%s) : %s' % (fri, fri*'x')
+    print '         Sat (%s) : %s' % (sat, sat*'x')
+    print '         Sun (%s) : %s' % (sun, sun*'x')
+    print ''
+    
 
     print days_of_month
-    print months_of_year
-    print hours_of_day
-    print '[+]     %s checked in %s beers' % (args.user, len(when))
+    print ''
+
+    h6 = hours_of_day.count('06')
+    h7 = hours_of_day.count('07')
+    h8 = hours_of_day.count('08')
+    h9 = hours_of_day.count('09')
+    h10 = hours_of_day.count('10')
+    h11 = hours_of_day.count('11')
+    h12 = hours_of_day.count('12')
+    h13 = hours_of_day.count('13')
+    h14 = hours_of_day.count('14')
+    h15 = hours_of_day.count('15')
+    h16 = hours_of_day.count('16')
+    h17 = hours_of_day.count('17')
+    h18 = hours_of_day.count('18')
+    h19 = hours_of_day.count('19')
+    h20 = hours_of_day.count('20')
+    h21 = hours_of_day.count('21')
+    h22 = hours_of_day.count('22')
+    h23 = hours_of_day.count('23')
+    h0 = hours_of_day.count('00')
+    h1 = hours_of_day.count('01')
+    h2 = hours_of_day.count('02')
+    h3 = hours_of_day.count('03')
+    h4 = hours_of_day.count('04')
+    h5 = hours_of_day.count('05')
+
+    print '[*]  Drinking Patterns (Last 25 beers) - Hours of Day'
+    print '       Hour (#) : HISTOGRAM'
+    print '      ---------------------------------'
+    print '         06 (%s) : %s' % (h6, h6*'x')
+    print '         07 (%s) : %s' % (h7, h7*'x')
+    print '         08 (%s) : %s' % (h8, h8*'x')
+    print '         09 (%s) : %s' % (h9, h9*'x')
+    print '         10 (%s) : %s' % (h10, h10*'x')
+    print '         11 (%s) : %s' % (h11, h11*'x')
+    print '         12 (%s) : %s' % (h12, h12*'x')
+    print '         13 (%s) : %s' % (h13, h13*'x')
+    print '         14 (%s) : %s' % (h14, h14*'x')
+    print '         15 (%s) : %s' % (h15, h15*'x')
+    print '         16 (%s) : %s' % (h16, h16*'x')
+    print '         17 (%s) : %s' % (h17, h17*'x')
+    print '         18 (%s) : %s' % (h18, h18*'x')
+    print '         19 (%s) : %s' % (h19, h19*'x')
+    print '         20 (%s) : %s' % (h20, h20*'x')
+    print '         21 (%s) : %s' % (h21, h21*'x')
+    print '         22 (%s) : %s' % (h22, h22*'x')
+    print '         23 (%s) : %s' % (h23, h23*'x')
+    print '         00 (%s) : %s' % (h0, h0*'x')
+    print '         01 (%s) : %s' % (h1, h1*'x')
+    print '         02 (%s) : %s' % (h2, h2*'x')
+    print '         03 (%s) : %s' % (h3, h3*'x')
+    print '         04 (%s) : %s' % (h4, h4*'x')
+    print '         05 (%s) : %s' % (h5, h5*'x')
 else:
 	print '[-]     No recent checkin dates/times found' 
 ''' debug
