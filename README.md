@@ -10,7 +10,7 @@ So I wondered if I could patch together some Python to scrape the [Untappd.com](
 * Are they "binge" drinking?
 
 # Caveat
-Since this script scrapes the public pages without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
+Since this script scrapes the public pages (private Untappd profiles are not scraped) without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
 
 # Usage
 Grab the code for this and you should be good (no 3rd party libraries for running).

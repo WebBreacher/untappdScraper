@@ -69,7 +69,7 @@ def GetFriendData(passed_user):
 
 def GetVenueData(passed_user):
     # Parsing user friend information
-    url = 'https://untappd.com/user/%s/venue' % passed_user
+    url = 'https://untappd.com/user/%s/venues?type=&sort=highest_checkin' % passed_user
     print "\n[ ] VENUE DATA: Requesting %s" % url
     resp = GetDataFromUntappd(url)
     # Do something with the responses
@@ -290,20 +290,20 @@ if when:
     binge_drink_counter = 0
     for day in ["%02d" % i for i in range(32)]:
         if days_of_month.count(day) >= 5:
-            print '[!] *ALERT = Due to drinking %s beers on day %s, user may be a "Binge Drinker"' % (days_of_month.count(day), day)
+            print '[!] *ALERT - Due to drinking %s beers on day %s, user may be a "Binge Drinker"' % (days_of_month.count(day), day)
             print '[!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.'
             # Cycle back through the data to pull out H:M:S for beers drank on a certain day
             for beer_date_time in when:
                 dates = beer_date_time.split()
                 if day == dates[1]:
-                    print '[!]          %s' % dates[4]
+                    print '[!]            %s' % dates[4]
 
             binge_drink_counter += 1
     if binge_drink_counter >= 4:
         print '[!] *ALERT = Due to %s days of Binge Drinking, user may be a "Heavy Drinker"' % binge_drink_counter
     elif binge_drink_counter >=1:
-        print '[!]      *This script does not examine the amount of time between drinks, which is important.'
-        print '[!]      *https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking'
+        print '[!]      * This script does not examine the amount of time between drinks, which is important.'
+        print '[!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking'
 
 else:
 	print '[-]     No recent checkin dates/times found' 
