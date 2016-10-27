@@ -47,6 +47,7 @@ def GetUserData(passed_user):
         matchUserObj = re.match('.*<span class="stat">([0-9,]+)</span>', line)
         if matchUserObj:
             user.append(matchUserObj.group(1))
+
     if user:
         return user
     
@@ -94,7 +95,7 @@ def GetBeersData(passed_user):
 ###########################
 # Start
 ###########################
-'''
+
 # Get Beer Drinking dates/times
 when = GetBeersData(args.user)
 if when:
@@ -109,13 +110,13 @@ else:
 friends = GetFriendData(args.user)
 if friends:
     print '[ ]     Friends of %s:' % args.user
-    print '        Name // Account_Name'
-    print '        --------------------'
+    print '            Acct Name ------ Name'
+    print '            --------------------'
     for friend in friends:
-        print '[+]     %s // %s' % (friend['name'], friend['acct'])
+        print '[+]         %s ------ %s' % (friend['acct'], friend['name'])
 else:
 	print '[-]     No friends found'
-'''
+
 # Get User info
 user = GetUserData(args.user)
 if user:
