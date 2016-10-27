@@ -25,9 +25,9 @@ args = parser.parse_args()
 def GetDataFromUntappd(url):
     # Setting up and Making the Web Call
     try:
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36'
+        user_agent = 'Mozilla/5.0 (Windows NT 12.0; WOW64) AppleWebKit/537.46 (KHTML, like Gecko) Chrome/47.0.2454.88 Safari/537.46'
         headers = {'User-Agent': user_agent}
-        req = urllib2.Request(url, headers)
+        req = urllib2.Request(url, headers = headers)
         response = urllib2.urlopen(req, timeout=20)
         print '[+]     Response from Untappd received'
         return response
@@ -39,17 +39,23 @@ def GetDataFromUntappd(url):
 
 def GetUserData(passed_user):
     # Parsing user information
+    user = []
     url = 'https://untappd.com/user/%s' % passed_user
+    print "\n[ ] Requesting %s" % url
     resp = GetDataFromUntappd(url)
-    
-    # Do something with the responses
+    for line in resp.readlines():
+        matchUserObj = re.match('.*<span class="stat">([0-9,]+)</span>', line)
+        if matchUserObj:
+            user.append(matchUserObj.group(1))
+    if user:
+        return user
     
 
 def GetFriendData(passed_user):
     friends = []
     # Parsing user friend information
     url = 'https://untappd.com/user/%s/friends' % passed_user
-    print "\n[-] Requesting %s" % url
+    print "\n[ ] Requesting %s" % url
     resp = GetDataFromUntappd(url)
     for line in resp.readlines():
         matchNamesObj = re.match('.*<a href="/user/(.+)">(.+)</a>.*', line)
@@ -73,7 +79,7 @@ def GetBeersData(passed_user):
     beers_drank = []
     # Parsing user beer information
     url = 'https://untappd.com/user/%s/beers' % passed_user
-    print "\n[-] Requesting %s" % url
+    print "\n[ ] Requesting %s" % url
     resp = GetDataFromUntappd(url)
     for line in resp.readlines():
         matchObj = re.match('.*recentCheckin.+date-time">(.+?)<', line)
@@ -88,7 +94,7 @@ def GetBeersData(passed_user):
 ###########################
 # Start
 ###########################
-
+'''
 # Get Beer Drinking dates/times
 when = GetBeersData(args.user)
 if when:
@@ -102,8 +108,20 @@ else:
 # Get friends of target
 friends = GetFriendData(args.user)
 if friends:
-    print '[+] Friends of %s:' % args.user
+    print '[ ]     Friends of %s:' % args.user
+    print '        Name // Account_Name'
+    print '        --------------------'
     for friend in friends:
-        print '[+]     NAME: %s  --->  ACCT: %s' % (friend['name'], friend['acct'])
+        print '[+]     %s // %s' % (friend['name'], friend['acct'])
 else:
 	print '[-]     No friends found'
+'''
+# Get User info
+user = GetUserData(args.user)
+if user:
+	print '[ ]     User info for %s:' % args.user
+    	print '[+]         Total Beers:   %s' % user[0]
+    	print '[+]         Total Unique:  %s' % user[1]
+    	print '[+]         Total Badges:  %s' % user[2]
+    	print '[+]         Total Friends: %s' % user[3]
+ 
