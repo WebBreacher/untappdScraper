@@ -98,14 +98,42 @@ def GetBeersData(passed_user):
 
 # Get Beer Drinking dates/times
 when = GetBeersData(args.user)
+days_of_week = []
+days_of_month = []
+hours_of_day = []
+
 if when:
     for beer_date_time in when:
-        #Do something with this info
-        print '[+]     %s' % beer_date_time
+        # Need to separate all pieces of the date
+        # get day of week and count
+        #     then do a histogram
+        # get day of the month (number)
+        #     then do histogram
+        # get number of times per day 09 Oct 2016
+        #     then do histogram
+        # get hours of day
+        #     then do a histogram
+        # do analysis of binge drinker
+        # Average number of drinks per day
+        # average number of drinks per month
+        
+        dates = beer_date_time.split()
+        days_of_week.append(dates[0].strip(','))
+        days_of_month.append(dates[1])
+        hours_min_sec = dates[4].split(':')
+        hours_of_day.append(hours_min_sec[0])
+
+        #print '[+]     %s' % beer_date_time
+    for d in days_of_week:
+        print d, days_of_week[d]*'|"'
+
+    print days_of_month
+    print months_of_year
+    print hours_of_day
     print '[+]     %s checked in %s beers' % (args.user, len(when))
 else:
 	print '[-]     No recent checkin dates/times found' 
-
+''' debug
 # Get friends of target
 friends = GetFriendData(args.user)
 if friends:
@@ -125,4 +153,4 @@ if user:
     	print '[+]         Total Unique:  %s' % user[1]
     	print '[+]         Total Badges:  %s' % user[2]
     	print '[+]         Total Friends: %s' % user[3]
- 
+'''
