@@ -28,113 +28,107 @@ optional arguments:
 # Example
 
 ```
-$  python untapped.py -u nvrhapy
+$  python untapped.py -u sprout1880
 
-[ ] Requesting https://untappd.com/user/nvrhapy/beers
+[ ] Requesting https://untappd.com/user/sprout1880/beers
 [+]     Response from Untappd received
 [*]  Drinking Patterns (Last 25 beers) - Days of Week
          Day (#) : HISTOGRAM
         ---------------------------------
          Mon ( 0) :
          Tue ( 0) :
-         Wed ( 0) :
-         Thu ( 1) : x
-         Fri ( 1) : x
-         Sat (14) : xxxxxxxxxxxxxx
-         Sun ( 9) : xxxxxxxxx
+         Wed ( 1) : x
+         Thu ( 5) : xxxxx
+         Fri ( 3) : xxx
+         Sat ( 9) : xxxxxxxxx
+         Sun ( 7) : xxxxxxx
 
 [*]  Drinking Patterns (Last 25 beers) - Hours of Day
-       Hour (#) : HISTOGRAM
+         Hour   (#) : HISTOGRAM
       ---------------------------------
-         06 ( 0) :
-         07 ( 0) :
-         08 ( 0) :
-         09 ( 0) :
-         10 ( 1) : x
-         11 ( 1) : x
-         12 ( 0) :
-         13 ( 2) : xx
-         14 ( 0) :
-         15 ( 0) :
-         16 ( 2) : xx
-         17 ( 0) :
-         18 ( 0) :
-         19 ( 2) : xx
-         20 ( 4) : xxxx
-         21 ( 6) : xxxxxx
-         22 ( 3) : xxx
-         23 ( 4) : xxxx
-         00 ( 0) :
-         01 ( 0) :
-         02 ( 0) :
-         03 ( 0) :
-         04 ( 0) :
-         05 ( 0) :
+         06:00 ( 0) :
+         07:00 ( 0) :
+         08:00 ( 0) :
+         09:00 ( 0) :
+         10:00 ( 0) :
+         11:00 ( 0) :
+         12:00 ( 3) : xxx
+         13:00 ( 1) : x
+         14:00 ( 3) : xxx
+         15:00 ( 0) :
+         16:00 ( 1) : x
+         17:00 ( 0) :
+         18:00 ( 5) : xxxxx
+         19:00 ( 1) : x
+         20:00 ( 3) : xxx
+         21:00 ( 7) : xxxxxxx
+         22:00 ( 1) : x
+         23:00 ( 0) :
+         00:00 ( 0) :
+         01:00 ( 0) :
+         02:00 ( 0) :
+         03:00 ( 0) :
+         04:00 ( 0) :
+         05:00 ( 0) :
 
 [*]  Drinking Patterns (Last 25 beers) - Day of Month
        Day (#) : HISTOGRAM
       ---------------------------------
          00 ( 0) :
-         01 ( 1) : x
+         01 ( 0) :
          02 ( 0) :
-         03 ( 3) : xxx
-         04 ( 1) : x
+         03 ( 1) : x
+         04 ( 0) :
          05 ( 0) :
          06 ( 0) :
          07 ( 0) :
-         08 ( 1) : x
-         09 ( 3) : xxx
-         10 ( 1) : x
+         08 ( 2) : xx
+         09 ( 2) : xx
+         10 ( 0) :
          11 ( 0) :
          12 ( 0) :
          13 ( 0) :
-         14 ( 1) : x
-         15 ( 3) : xxx
-         16 ( 2) : xx
+         14 ( 2) : xx
+         15 ( 0) :
+         16 ( 3) : xxx
          17 ( 1) : x
          18 ( 2) : xx
          19 ( 0) :
-         20 ( 0) :
-         21 ( 0) :
+         20 ( 5) : xxxxx
+         21 ( 1) : x
          22 ( 5) : xxxxx
-         23 ( 1) : x
+         23 ( 0) :
          24 ( 0) :
          25 ( 0) :
          26 ( 0) :
          27 ( 0) :
          28 ( 0) :
          29 ( 0) :
-         30 ( 0) :
+         30 ( 1) : x
          31 ( 0) :
 
-[ ] Requesting https://untappd.com/user/nvrhapy/friends
+[ ] Requesting https://untappd.com/user/sprout1880/friends
 [+]     Response from Untappd received
-[ ]     Friends of nvrhapy:
+[ ]     Friends of sprout1880:
             Acct Name ------ Name
             --------------------
-            jv34682 ------ John V.
-            tommasocamilleri2 ------ Tommaso C.
-            Joeheredia ------ Joe H.
             beerhere89 ------ stephany d.
-            Jwilson126 ------ Jason W.
-            fernicus ------ Adam F.
-            1MattyG ------ Matty G.
-            traceyann83 ------ Tracey N.
+            drinkcraftbrew ------ Tony
+            Kubrickx ------ Zenus
             Fatabird ------ Fatima F.
-            greencape ------ Jay M.
             crispix ------ Christina Z.
-            Redpac ------ Dan S.
-            pinatax ------ Tall S.
-            sprout1880 ------ russell u.
+            nvrhapy ------ steve
             1rar3br33d ------ Matt
+            pinatax ------ Tall S.
+            Redpac ------ Dan S.
 
-[ ] Requesting https://untappd.com/user/nvrhapy
+[ ] Requesting https://untappd.com/user/sprout1880
 [+]     Response from Untappd received
-[ ]     User info for nvrhapy:
-            Total Beers:    2,263
-            Total Unique:   1,138
-            Total Badges:     396
-            Total Friends:     15
+[ ]     User info for sprout1880:
+            Total Beers:    3,582
+            Total Unique:   2,015
+            Total Badges:     514
+            Total Friends:      9
 ```
 
 # To Do
