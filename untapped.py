@@ -173,7 +173,7 @@ if when:
     h5 = hours_of_day.count('05')
 
     print '[*]  Drinking Patterns (Last 25 beers) - Hours of Day'
-    print '       Hour (#) : HISTOGRAM'
+    print '         Hour   (#) : HISTOGRAM'
     print '      ---------------------------------'
     print '         06:00 (%2d) : %s' % (h6, h6*'x')
     print '         07:00 (%2d) : %s' % (h7, h7*'x')
