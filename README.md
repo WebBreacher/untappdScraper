@@ -7,12 +7,13 @@ So I wondered if I could patch together some Python to scrape the [Untappd.com](
 * What day of the month do they drink most often?
 * Who do they drink with?
 * Where do they drink?
+* Are they "binge" drinking?
 
 # Caveat
 Since this script scrapes the public pages without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
 
 # Usage
-Grab the code for this and you should be good (no 3rd party libraries).
+Grab the code for this and you should be good (no 3rd party libraries for running).
 
 ```
 $  python untapped.py -h
@@ -30,8 +31,26 @@ optional arguments:
 ```
 $  python untapped.py -u sprout1880
 
-[ ] Requesting https://untappd.com/user/sprout1880/beers
-[+]     Response from Untappd received
+[ ] USER DATA: Requesting https://untappd.com/user/sprout1880
+        Total Beers:    3,582
+        Total Unique:   2,015
+        Total Badges:     514
+        Total Friends:      9
+
+[ ] FRIEND DATA: Requesting https://untappd.com/user/sprout1880/friends
+        Acct Name --> Name
+       --------------------
+        beerhere89 --> stephany d.
+        drinkcraftbrew --> Tony
+        Kubrickx --> Zenus
+        Fatabird --> Fatima F.
+        crispix --> Christina Z.
+        nvrhapy --> steve
+        1rar3br33d --> Matt
+        pinatax --> Tall S.
+        Redpac --> Dan S.
+
+[ ] BEER CONSUMPTION DATA: Requesting https://untappd.com/user/sprout1880/beers
 [*]  Drinking Patterns (Last 25 beers) - Days of Week
          Day (#) : HISTOGRAM
         ---------------------------------
@@ -107,33 +126,26 @@ $  python untapped.py -u sprout1880
          30 ( 1) : x
          31 ( 0) :
 
-[ ] Requesting https://untappd.com/user/sprout1880/friends
-[+]     Response from Untappd received
-[ ]     Friends of sprout1880:
-            Acct Name ------ Name
-            --------------------
-            beerhere89 ------ stephany d.
-            drinkcraftbrew ------ Tony
-            Kubrickx ------ Zenus
-            Fatabird ------ Fatima F.
-            crispix ------ Christina Z.
-            nvrhapy ------ steve
-            1rar3br33d ------ Matt
-            pinatax ------ Tall S.
-            Redpac ------ Dan S.
-
-[ ] Requesting https://untappd.com/user/sprout1880
-[+]     Response from Untappd received
-[ ]     User info for sprout1880:
-            Total Beers:    3,582
-            Total Unique:   2,015
-            Total Badges:     514
-            Total Friends:      9
+[!] *ALERT = Due to drinking 5 beers on day 20, user may be a "Binge Drinker"
+[!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.
+[!]          20:56:50
+[!]          20:25:06
+[!]          19:48:08
+[!]          18:48:17
+[!]          18:47:19
+[!] *ALERT = Due to drinking 5 beers on day 22, user may be a "Binge Drinker"
+[!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.
+[!]          21:58:18
+[!]          21:37:02
+[!]          21:31:29
+[!]          21:08:33
+[!]          20:34:46
+[!]      *This script does not examine the amount of time between drinks, which is important.
+[!]      *https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
 ```
 
 # To Do
 * Triangulate where the person lives by using the places they most frequent and some fancy geolocation
-* Do some analytics on their drinking behaviors (binge drinking, morning drinking...)
 * Webify this so that it looks better and easy to access
 * See if I can get more than just the last 25 beers somehow (aside from API use)
 * Use an internal DB (sqlite?) to track users over time
