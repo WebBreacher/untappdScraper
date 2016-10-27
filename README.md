@@ -1,13 +1,15 @@
 # untappdScraper
-I noticed that many people on Twitter publish when they use the Untappd.com application. This app allows a user to "check-in" when they drink beer. They get badges, they dates and times of their drinking is noted, and many times the geographic location of where they drank is also available.....all with no authentication! Woohoo!
+I noticed that many people on Twitter publish when they use the [https://www.google.com/search?num=100&newwindow=1&q=untappd+%22i+just+earned%22+site%3Atwitter.com&oq=untappd+%22i+just+earned%22+site%3Atwitter.com&gs_l=serp.3...4164.7850.0.8239.9.9.0.0.0.0.140.679.6j2.8.0....0...1c.1.64.serp..1.3.259...33i160k1j33i21k1.7lDTNQbSBAk](Untappd.com) application. This app allows a user to "check-in" when they drink beer. They get badges, they dates and times of their drinking is noted, and many times the geographic location of where they drank is also available.....all with no authentication! Woohoo!
 
-So I wondered if I could patch together some Python to scrape the Untappd.com web site for a given user and then do some analytics on their drinking habits. Stuff like:
+So I wondered if I could patch together some Python to scrape the [http://untappd.com](Untappd.com) web site for a given user and then do some analytics on their drinking habits. Stuff like:
 * What time of day do they drink most often?
 * What day of the week do they drink most often?
 * What day of the month do they drink most often?
 * Who do they drink with?
 * Where do they drink?
 
+# Caveat
+Since this script scrapes the public pages without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
 
 # Usage
 Grab the code for this and you should be good (no 3rd party libraries).
@@ -134,3 +136,10 @@ $  python untapped.py -u nvrhapy
             Total Badges:     396
             Total Friends:     15
 ```
+
+# To Do
+* Triangulate where the person lives by using the places they most frequent and some fancy geolocation
+* Do some analytics on their drinking behaviors (binge drinking, morning drinking...)
+* Webify this so that it looks better and easy to access
+* See if I can get more than just the last 25 beers somehow (aside from API use)
+* Use an internal DB (sqlite?) to track users over time
