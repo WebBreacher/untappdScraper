@@ -29,7 +29,6 @@ def GetDataFromUntappd(url):
         headers = {'User-Agent': user_agent}
         req = urllib2.Request(url, headers = headers)
         response = urllib2.urlopen(req, timeout=20)
-        print '[+]     Response from Untappd received'
         return response
 
     except Exception, e:
@@ -41,7 +40,7 @@ def GetUserData(passed_user):
     # Parsing user information
     user = []
     url = 'https://untappd.com/user/%s' % passed_user
-    print "\n[ ] Requesting %s" % url
+    print "\n[ ] USER DATA: Requesting %s" % url
     resp = GetDataFromUntappd(url)
     for line in resp.readlines():
         matchUserObj = re.match('.*<span class="stat">([0-9,]+)</span>', line)
@@ -56,7 +55,7 @@ def GetFriendData(passed_user):
     friends = []
     # Parsing user friend information
     url = 'https://untappd.com/user/%s/friends' % passed_user
-    print "\n[ ] Requesting %s" % url
+    print "\n[ ] FRIEND DATA: Requesting %s" % url
     resp = GetDataFromUntappd(url)
     for line in resp.readlines():
         matchNamesObj = re.match('.*<a href="/user/(.+)">(.+)</a>.*', line)
@@ -71,8 +70,8 @@ def GetFriendData(passed_user):
 def GetVenueData(passed_user):
     # Parsing user friend information
     url = 'https://untappd.com/user/%s/venue' % passed_user
+    print "\n[ ] VENUE DATA: Requesting %s" % url
     resp = GetDataFromUntappd(url)
-    
     # Do something with the responses
 
 
@@ -80,7 +79,7 @@ def GetBeersData(passed_user):
     beers_drank = []
     # Parsing user beer information
     url = 'https://untappd.com/user/%s/beers' % passed_user
-    print "\n[ ] Requesting %s" % url
+    print "\n[ ] BEER CONSUMPTION DATA: Requesting %s" % url
     resp = GetDataFromUntappd(url)
     for line in resp.readlines():
         matchObj = re.match('.*recentCheckin.+date-time">(.+?)<', line)
@@ -96,7 +95,33 @@ def GetBeersData(passed_user):
 # Start
 ###########################
 
+###############
+# Get User info
+###############
+user = GetUserData(args.user)
+if user:
+    print '        Total Beers:   %6s' % user[0]
+    print '        Total Unique:  %6s' % user[1]
+    print '        Total Badges:  %6s' % user[2]
+    print '        Total Friends: %6s' % user[3]
+
+
+###############
+# Get friends of target
+###############
+friends = GetFriendData(args.user)
+if friends:
+    print '        Acct Name --> Name'
+    print '       --------------------'
+    for friend in friends:
+        print '        %s --> %s' % (friend['acct'], friend['name'])
+else:
+    print '[-]     No friends found'
+
+
+###############
 # Get Beer Drinking dates/times
+###############
 when = GetBeersData(args.user)
 days_of_week = []
 days_of_month = []
@@ -104,26 +129,12 @@ hours_of_day = []
 
 if when:
     for beer_date_time in when:
-        # Need to separate all pieces of the date
-        # get day of week and count
-        #     then do a histogram
-        # get day of the month (number)
-        #     then do histogram
-        # get number of times per day 09 Oct 2016
-        #     then do histogram
-        # get hours of day
-        #     then do a histogram
-        # do analysis of binge drinker
-        # Average number of drinks per day
-        # average number of drinks per month
-        
         dates = beer_date_time.split()
         days_of_week.append(dates[0].strip(','))
         days_of_month.append(dates[1])
         hours_min_sec = dates[4].split(':')
         hours_of_day.append(hours_min_sec[0])
-
-        #print '[+]     %s' % beer_date_time
+        #print '[+]     %s' % beer_date_time  # DEBUG
 
     # Days of Week Analysis
     sun = days_of_week.count('Sun')
@@ -270,27 +281,30 @@ if when:
     print '         29 (%2d) : %s' % (d29, d29*'x')
     print '         30 (%2d) : %s' % (d30, d30*'x')
     print '         31 (%2d) : %s' % (d31, d31*'x')
+    print ''
+
+    # Drinking Levels from https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
+    # Binge Drinking = 5+ drinks same day
+    # Heavy Drinking = 5+ drinks on 5+ days per month
+    #     Since we only get 25 total beers now, I'm changing this to 4 days per month ~=heavy drinker
+    binge_drink_counter = 0
+    for day in ["%02d" % i for i in range(32)]:
+        if days_of_month.count(day) >= 5:
+            print '[!] *ALERT = Due to drinking %s beers on day %s, user may be a "Binge Drinker"' % (days_of_month.count(day), day)
+            print '[!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.'
+            # Cycle back through the data to pull out H:M:S for beers drank on a certain day
+            for beer_date_time in when:
+                dates = beer_date_time.split()
+                if day == dates[1]:
+                    print '[!]          %s' % dates[4]
+
+            binge_drink_counter += 1
+    if binge_drink_counter >= 4:
+        print '[!] *ALERT = Due to %s days of Binge Drinking, user may be a "Heavy Drinker"' % binge_drink_counter
+    elif binge_drink_counter >=1:
+        print '[!]      *This script does not examine the amount of time between drinks, which is important.'
+        print '[!]      *https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking'
+
 else:
 	print '[-]     No recent checkin dates/times found' 
 
-
-# Get friends of target
-friends = GetFriendData(args.user)
-if friends:
-    print '[ ]     Friends of %s:' % args.user
-    print '            Acct Name ------ Name'
-    print '            --------------------'
-    for friend in friends:
-        print '            %s ------ %s' % (friend['acct'], friend['name'])
-else:
-	print '[-]     No friends found'
-
-
-# Get User info
-user = GetUserData(args.user)
-if user:
-	print '[ ]     User info for %s:' % args.user
-    	print '            Total Beers:   %6s' % user[0]
-    	print '            Total Unique:  %6s' % user[1]
-    	print '            Total Badges:  %6s' % user[2]
-    	print '            Total Friends: %6s' % user[3]
