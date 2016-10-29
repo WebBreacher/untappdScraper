@@ -92,6 +92,8 @@ def GetVenueData(passed_user):
         print '      {:>4}   {}, {}'.format('Checkins', 'Name', 'Address')
         for venue in matchVenueObj:
             print '       {:>4}      {}, {}'.format(venue[3], venue[1], venue[2].replace('\t','').replace('\n',''))
+    else:
+        print '[-] No Venue data found'
 
 
 ###########################
