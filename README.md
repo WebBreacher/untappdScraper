@@ -29,60 +29,66 @@ optional arguments:
 # Example
 
 ```
-$  python untapped.py -u sprout1880
+$  python untapped.py -u nvrhapy
 
-[ ] USER DATA: Requesting https://untappd.com/user/sprout1880
-        Total Beers:    3,582
-        Total Unique:   2,015
-        Total Badges:     514
-        Total Friends:      9
+[ ] USER DATA: Requesting https://untappd.com/user/nvrhapy
+        Total Beers:    2,263
+        Total Unique:   1,138
+        Total Badges:     396
+        Total Friends:     15
 
-[ ] FRIEND DATA: Requesting https://untappd.com/user/sprout1880/friends
-        Acct Name --> Name
-       --------------------
-        beerhere89 --> stephany d.
-        drinkcraftbrew --> Tony
-        Kubrickx --> Zenus
-        Fatabird --> Fatima F.
-        crispix --> Christina Z.
-        nvrhapy --> steve
-        1rar3br33d --> Matt
-        pinatax --> Tall S.
-        Redpac --> Dan S.
+[ ] FRIEND DATA: Requesting https://untappd.com/user/nvrhapy/friends
+        Account               Name
+        ----------------------------------
+        jv34682               John V.
+        tommasocamilleri2     Tommaso C.
+        Joeheredia            Joe H.
+        beerhere89            stephany d.
+        Jwilson126            Jason W.
+        fernicus              Adam F.
+        1MattyG               Matty G.
+        traceyann83           Tracey N.
+        Fatabird              Fatima F.
+        greencape             Jay M.
+        crispix               Christina Z.
+        Redpac                Dan S.
+        pinatax               Tall S.
+        sprout1880            russell u.
+        1rar3br33d            Matt
 
-[ ] BEER CONSUMPTION DATA: Requesting https://untappd.com/user/sprout1880/beers
+[ ] BEER CONSUMPTION DATA: Requesting https://untappd.com/user/nvrhapy/beers
 [*]  Drinking Patterns (Last 25 beers) - Days of Week
-         Day (#) : HISTOGRAM
+         Day ( #) : HISTOGRAM
         ---------------------------------
          Mon ( 0) :
          Tue ( 0) :
-         Wed ( 1) : x
-         Thu ( 5) : xxxxx
-         Fri ( 3) : xxx
-         Sat ( 9) : xxxxxxxxx
-         Sun ( 7) : xxxxxxx
+         Wed ( 0) :
+         Thu ( 1) : x
+         Fri ( 1) : x
+         Sat (14) : xxxxxxxxxxxxxx
+         Sun ( 9) : xxxxxxxxx
 
 [*]  Drinking Patterns (Last 25 beers) - Hours of Day
-         Hour   (#) : HISTOGRAM
+         Hour  ( #) : HISTOGRAM
       ---------------------------------
          06:00 ( 0) :
          07:00 ( 0) :
          08:00 ( 0) :
          09:00 ( 0) :
-         10:00 ( 0) :
-         11:00 ( 0) :
-         12:00 ( 3) : xxx
-         13:00 ( 1) : x
-         14:00 ( 3) : xxx
+         10:00 ( 1) : x
+         11:00 ( 1) : x
+         12:00 ( 0) :
+         13:00 ( 2) : xx
+         14:00 ( 0) :
          15:00 ( 0) :
-         16:00 ( 1) : x
+         16:00 ( 2) : xx
          17:00 ( 0) :
-         18:00 ( 5) : xxxxx
-         19:00 ( 1) : x
-         20:00 ( 3) : xxx
-         21:00 ( 7) : xxxxxxx
-         22:00 ( 1) : x
-         23:00 ( 0) :
+         18:00 ( 0) :
+         19:00 ( 2) : xx
+         20:00 ( 4) : xxxx
+         21:00 ( 6) : xxxxxx
+         22:00 ( 3) : xxx
+         23:00 ( 4) : xxxx
          00:00 ( 0) :
          01:00 ( 0) :
          02:00 ( 0) :
@@ -93,55 +99,76 @@ $  python untapped.py -u sprout1880
 [*]  Drinking Patterns (Last 25 beers) - Day of Month
        Day (#) : HISTOGRAM
       ---------------------------------
-         00 ( 0) :
-         01 ( 0) :
-         02 ( 0) :
-         03 ( 1) : x
-         04 ( 0) :
-         05 ( 0) :
-         06 ( 0) :
-         07 ( 0) :
-         08 ( 2) : xx
-         09 ( 2) : xx
-         10 ( 0) :
-         11 ( 0) :
-         12 ( 0) :
-         13 ( 0) :
-         14 ( 2) : xx
-         15 ( 0) :
-         16 ( 3) : xxx
-         17 ( 1) : x
-         18 ( 2) : xx
-         19 ( 0) :
-         20 ( 5) : xxxxx
-         21 ( 1) : x
-         22 ( 5) : xxxxx
-         23 ( 0) :
-         24 ( 0) :
-         25 ( 0) :
-         26 ( 0) :
-         27 ( 0) :
-         28 ( 0) :
-         29 ( 0) :
-         30 ( 1) : x
-         31 ( 0) :
+       00  ( 0) :
+       01  ( 1) : x
+       02  ( 0) :
+       03  ( 3) : xxx
+       04  ( 1) : x
+       05  ( 0) :
+       06  ( 0) :
+       07  ( 0) :
+       08  ( 1) : x
+       09  ( 3) : xxx
+       10  ( 1) : x
+       11  ( 0) :
+       12  ( 0) :
+       13  ( 0) :
+       14  ( 1) : x
+       15  ( 3) : xxx
+       16  ( 2) : xx
+       17  ( 1) : x
+       18  ( 2) : xx
+       19  ( 0) :
+       20  ( 0) :
+       21  ( 0) :
+       22  ( 5) : xxxxx
+       23  ( 1) : x
+       24  ( 0) :
+       25  ( 0) :
+       26  ( 0) :
+       27  ( 0) :
+       28  ( 0) :
+       29  ( 0) :
+       30  ( 0) :
+       31  ( 0) :
 
-[!] *ALERT = Due to drinking 5 beers on day 20, user may be a "Binge Drinker"
+[!] *ALERT - Due to drinking 5 beers on day 22, user may be a "Binge Drinker"
 [!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.
-[!]          20:56:50
-[!]          20:25:06
-[!]          19:48:08
-[!]          18:48:17
-[!]          18:47:19
-[!] *ALERT = Due to drinking 5 beers on day 22, user may be a "Binge Drinker"
-[!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.
-[!]          21:58:18
-[!]          21:37:02
-[!]          21:31:29
-[!]          21:08:33
-[!]          20:34:46
-[!]      *This script does not examine the amount of time between drinks, which is important.
-[!]      *https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
+[!]            23:51:43
+[!]            21:54:11
+[!]            21:31:33
+[!]            21:22:04
+[!]            20:29:19
+[!]      * This script does not examine the amount of time between drinks, which is important.
+[!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
+
+[ ] VENUE DATA: Requesting https://untappd.com/user/nvrhapy/venues?type=&sort=highest_checkin
+      Checkins   Name, Address
+        633      shorts house, IL
+        218      steve and christinas, IL
+        106      Redpac's Cocktail Lounge and Beer Bar, 2145 calistoga ave New Lenox, IL
+         57      sprout's brew haus, IL
+         42      The Beer Dungeon, IL
+         32      Steger Wildcat Football, IL
+         31      halsted & joe orr rd, IL
+         31      One Trick Pony, 17933 Chappel Ave Lansing, IL
+         29      Peaceful Acres Resort, Larch Rd Ludington, MI
+         26      Evil Horse Brewing Company, 1336 Main St Crete, IL
+         24      Lassen's Sports Bar & Grill, 2131 183rd St Homewood, IL
+         23      Chicagoland Speedway, 500 Speedway Blvd Joliet, IL
+         20      Flossmoor Station Restaurant & Brewery, 1035 Sterling Ave Flossmoor, IL
+         19      Smokey Jo's Real Pit BBQ & Old Town Tap, 475 W Burville Rd Crete, IL
+         18      MountainLoft Resort, 110 Mountainloft Dr Gatlinburg, TN
+         17      Matts place, IL
+         17      Steger Baseball (Veterans Park), 3599 Phillips Ave Steger, IL
+         16      Crown Brewing, 211 S East St Crown Point, IN
+         16      Road America, N7390 Highway 67 Elkhart Lake, WI
+         14      Richard D. Irwin Park, IL
+         13      City of Chicago Heights, IL
+         13      The Open Bottle, 7101 183rd St Ste 105 Tinley Park, IL
+         13      Rock Bottom Restaurant & Brewery, 16156 S La Grange Rd Orland Park, IL
+         12      Prairie State College, 202 S Halsted St Chicago Heights, IL
+         12      Eastview School,
 ```
 
 # To Do
