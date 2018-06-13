@@ -10,8 +10,10 @@
 import argparse
 from bs4 import BeautifulSoup
 import re
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import sys
-import urllib.request, urllib.error, urllib.parse
+
 
 ####
 # Variables
@@ -20,7 +22,6 @@ import urllib.request, urllib.error, urllib.parse
 # Parse command line input
 parser = argparse.ArgumentParser(description="Grab Untappd user activity")
 parser.add_argument('-u', '--user', required=True, help='Username to research')
-#parser.add_argument('-o', '--outfile', help='[OPTIONAL] Output file for all content')
 args = parser.parse_args()
 
 def GetDataFromUntappd(url):
@@ -28,9 +29,9 @@ def GetDataFromUntappd(url):
     try:
         user_agent = 'Mozilla/5.0 (Windows NT 12.0; WOW64) AppleWebKit/537.54 (KHTML, like Gecko) Chrome/63.0.1876.88 Safari/537.54'
         headers = {'User-Agent': user_agent}
-        req = urllib.request.Request(url, headers = headers)
-        response = urllib.request.urlopen(req, timeout=20)
-        return response
+        # Make web request for that URL and don't verify SSL/TLS certs
+        response = requests.get(url, headers=headers, verify=False)
+        return response.text
 
     except Exception as e:
         print('[!]   ERROR - Untappd issue: {}'.format(str(e)))
@@ -43,16 +44,9 @@ def GetUserData(passed_user):
     url = 'https://untappd.com/user/{}'.format(passed_user)
     print("\n[ ] USER DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
-
-    html_doc = BeautifulSoup(resp.read(),"html.parser")
+    html_doc = BeautifulSoup(resp,"html.parser")
     user = html_doc.find_all('span', 'stat')
     
-    '''for line in resp.readlines():
-        matchUserObj = re.search('.*<span class="stat">([0-9,]+)</span>', line.decode('utf-8'))
-        print(matchUserObj) #DEBUG
-        if matchUserObj:
-            user.append(matchUserObj.group(1))
-            print(matchUserObj.group(1)) #DEBUG'''
     if user:
         return user
 
@@ -63,12 +57,11 @@ def GetFriendData(passed_user):
     url = 'https://untappd.com/user/{}/friends'.format(passed_user)
     print("\n[ ] FRIEND DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
-    for line in resp.readlines():
-        matchNamesObj = re.match('.*<a href="/user/(.+)">(.+)</a>.*', line)
-        if matchNamesObj:
-            friend_acct = matchNamesObj.group(1)
-            friend_name = matchNamesObj.group(2)
-            friends.append({'acct':friend_acct,'name':friend_name})
+    html_doc = BeautifulSoup(resp,"html.parser")
+    user = html_doc.find_all('div', 'user')
+    for u in user:
+        friends.append(u.text.strip())
+
     if friends:
         return friends
 
@@ -106,6 +99,9 @@ def GetVenueData(passed_user):
 # Start
 ###########################
 
+# Suppress HTTPS warnings
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 ###############
 # Get User info
 ###############
@@ -122,10 +118,10 @@ if user:
 ###############
 friends = GetFriendData(args.user)
 if friends:
-    print('        {:17}     {}'.format('Account', 'Name'))
-    print('        ----------------------------------')
+    print('        Name Account Location')
+    print('        ------------------------------------------')
     for friend in friends:
-        print('        {:17}     {}'.format(friend['acct'], friend['name']))
+        print('        {:17}'.format(friend))
 else:
     print('[-]     No friends found')
 
