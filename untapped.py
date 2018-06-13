@@ -72,6 +72,12 @@ def GetBeersData(passed_user):
     url = 'https://untappd.com/user/{}/beers'.format(passed_user)
     print("\n[ ] BEER CONSUMPTION DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
+    html_doc = BeautifulSoup(resp,"html.parser")
+    beers = html_doc.find_all('div', 'user')
+    for u in user:
+        friends.append(u.text.strip())    
+    #TODO stopped fixing here
+    
     for line in resp.readlines():
         matchObj = re.match('.*recentCheckin.+date-time">(.+?)<', line)
         if matchObj:
