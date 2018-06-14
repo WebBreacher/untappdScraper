@@ -73,16 +73,10 @@ def GetBeersData(passed_user):
     print("\n[ ] BEER CONSUMPTION DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
     html_doc = BeautifulSoup(resp,"html.parser")
-    beers = html_doc.find_all('div', 'user')
-    for u in user:
-        friends.append(u.text.strip())    
-    #TODO stopped fixing here
-    
-    for line in resp.readlines():
-        matchObj = re.match('.*recentCheckin.+date-time">(.+?)<', line)
-        if matchObj:
-            beer_drank = matchObj.group(1)
-            beers_drank.append(beer_drank)
+    beers = html_doc.find_all('abbr', 'date-time')
+    for b in beers:
+        beers_drank.append(b.text.strip())    
+
     if beers_drank:
         return beers_drank
 
@@ -92,7 +86,7 @@ def GetVenueData(passed_user):
     url = 'https://untappd.com/user/{}/venues?type=&sort=highest_checkin'.format(passed_user)
     print("\n[ ] VENUE DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
-    matchVenueObj = re.findall('data-href=":view/name" href="/venue/([0-9]+)">(.+?)</a>.*?class="address">(.+?)</div>.*?Check-ins:</strong>.*?([0-9]+).*?</p>', resp.read(), re.DOTALL)
+    matchVenueObj = re.findall('data-href=":view/name" href="/venue/([0-9]+)">(.+?)</a>.*?class="address">(.+?)</div>.*?Check-ins:</strong>.*?([0-9]+).*?</p>', resp, re.DOTALL)
     if matchVenueObj:
         print('      {:>4}   {}, {}'.format('Checkins', 'Name', 'Address'))
         for venue in matchVenueObj:
@@ -135,13 +129,13 @@ else:
 ###############
 # Get Beer Drinking dates/times
 ###############
-when = GetBeersData(args.user)
+when = list(set(GetBeersData(args.user))) # We need to remove duplicates from the list
 days_of_week = []
 days_of_month = []
 hours_of_day = []
 
 if when:
-    for beer_date_time in when:
+    for beer_date_time in when: 
         dates = beer_date_time.split()
         days_of_week.append(dates[0].strip(','))
         days_of_month.append(dates[1])
