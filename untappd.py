@@ -1,10 +1,7 @@
 #!/usr/bin/python
 '''
     Author: Micah Hoffman (@WebBreacher)
-    Purpose: To look up a user on Untappd and provide drinking profile
-    TODO -
-        1 - These pages only show so much without authentication.
-        	Auth then pass cookies? Then page every 25 records? (See Burp)
+    Purpose: To look up a user on Untappd.com and provide drinking profile
 '''
 
 import argparse
@@ -27,7 +24,7 @@ args = parser.parse_args()
 def GetDataFromUntappd(url):
     # Setting up and Making the Web Call
     try:
-        user_agent = 'Mozilla/5.0 (Windows NT 12.0; WOW64) AppleWebKit/537.54 (KHTML, like Gecko) Chrome/63.0.1876.88 Safari/537.54'
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0'
         headers = {'User-Agent': user_agent}
         # Make web request for that URL and don't verify SSL/TLS certs
         response = requests.get(url, headers=headers, verify=False)
@@ -141,8 +138,7 @@ if when:
         days_of_month.append(dates[1])
         hours_min_sec = dates[4].split(':')
         hours_of_day.append(hours_min_sec[0])
-        #print '[+]     {}'.formatbeer_date_time  # DEBUG
-
+        
     # Days of Week Analysis
     sun = days_of_week.count('Sun')
     mon = days_of_week.count('Mon')
@@ -163,7 +159,7 @@ if when:
     print('         Sat ({:>2}) : {}'.format(sat, sat*'x'))
     print('         Sun ({:>2}) : {}'.format(sun, sun*'x'))
     print('')
-
+    
     # Hours of Day Analysis
     h6 = hours_of_day.count('06')
     h7 = hours_of_day.count('07')
