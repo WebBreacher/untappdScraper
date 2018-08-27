@@ -20,24 +20,6 @@ import webbrowser
 # Functions
 ####
 
-def query_yes_no(question, default="yes"):
-    # From https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input#3041990
-    valid = {'yes': True, 'y': True, 'ye': True,
-             'no': False, 'n': False}
-    prompt = ' [Y/n] '
-
-    while True:
-        print(question + prompt)
-        choice = input().lower()
-        if default is not None and choice == '':
-            return valid[default]
-        elif choice in valid:
-            return valid[choice]
-        else:
-            print("Please respond with 'yes' or 'no' "
-                             "(or 'y' or 'n').\n")
-
-
 def Average(lst):
     return float(sum(lst) / len(lst))
 
@@ -140,9 +122,6 @@ def GetVenueData(passed_user):
     outfile = 'untappd_map_{}_{}.html'.format(args.user, str(int(time.time())))
     gmap.draw(outfile)
 
-    openIt = query_yes_no('Open the map file in a web browser?', 'yes')
-    if openIt:
-        webbrowser.open('file://' + os.path.realpath(outfile))
 
 ###########################
 # Start
