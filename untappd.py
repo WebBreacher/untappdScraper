@@ -6,15 +6,40 @@
 
 import argparse
 from bs4 import BeautifulSoup
+import geocoder
+import gmplot
+import os
 import re
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import sys
+import time
+import webbrowser
 
 
 ####
-# Variables
+# Functions
 ####
+
+def query_yes_no(question, default="yes"):
+    # From https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input#3041990
+    valid = {'yes': True, 'y': True, 'ye': True,
+             'no': False, 'n': False}
+    prompt = ' [Y/n] '
+
+    while True:
+        print(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            print("Please respond with 'yes' or 'no' "
+                             "(or 'y' or 'n').\n")
+
+
+def Average(lst):
+    return float(sum(lst) / len(lst))
 
 # Parse command line input
 parser = argparse.ArgumentParser(description="Grab Untappd user activity")
@@ -43,7 +68,7 @@ def GetUserData(passed_user):
     resp = GetDataFromUntappd(url)
     html_doc = BeautifulSoup(resp,"html.parser")
     user = html_doc.find_all('span', 'stat')
-    
+
     if user:
         return user
 
@@ -72,14 +97,15 @@ def GetBeersData(passed_user):
     html_doc = BeautifulSoup(resp,"html.parser")
     beers = html_doc.find_all('abbr', 'date-time')
     for b in beers:
-        beers_drank.append(b.text.strip())    
+        beers_drank.append(b.text.strip())
 
     if beers_drank:
         return beers_drank
 
 
 def GetVenueData(passed_user):
-    # Parsing user friend information
+    # Parsing check-in location information
+    drinksLatsLongs = []
     url = 'https://untappd.com/user/{}/venues?type=&sort=highest_checkin'.format(passed_user)
     print("\n[ ] VENUE DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
@@ -87,10 +113,36 @@ def GetVenueData(passed_user):
     if matchVenueObj:
         print('      {:>4}   {}, {}'.format('Checkins', 'Name', 'Address'))
         for venue in matchVenueObj:
-            print('       {:>4}      {}, {}'.format(venue[3], venue[1], venue[2].replace('\t','').replace('\n','')))
+            place = '{}, {}'.format(venue[1], venue[2].replace('\t','').replace('\n',''))
+            g = geocoder.google(place) # geocoder works better than the gmap method
+            print('       {:>4}      {}, {} {}'.format(venue[3], venue[1], venue[2].replace('\t','').replace('\n',''),g.latlng))
+            if g:
+                # Add the correct number of visits to the lat/lon list for weighting
+                for num in range(int(venue[3])):
+                    drinksLatsLongs.append(tuple(g.latlng))
     else:
         print('[-] No Venue data found')
+    drink_lats, drink_longs = zip(*drinksLatsLongs)
 
+    # Compute the center Lat and Long to center the map
+    center_lat = Average(drink_lats)
+    center_long = Average(drink_longs)
+    gmap = gmplot.GoogleMapPlotter(center_lat,center_long, 6)
+
+    # Create the points/heatmap/circles on the map
+    '''for lat, lng in drinksLatsLongs:
+        gmap.circle(lat, lng, 8000)
+    gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)'''
+    gmap.heatmap(drink_lats, drink_longs, 1, 100)
+    gmap.scatter(drink_lats, drink_longs, '#333333', size=20, marker=False)
+    gmap.plot(drink_lats, drink_longs, '#FF33FF', edge_width=3)
+
+    outfile = 'untappd_map_{}_{}.html'.format(args.user, str(int(time.time())))
+    gmap.draw(outfile)
+
+    openIt = query_yes_no('Open the map file in a web browser?', 'yes')
+    if openIt:
+        webbrowser.open('file://' + os.path.realpath(outfile))
 
 ###########################
 # Start
@@ -132,13 +184,13 @@ days_of_month = []
 hours_of_day = []
 
 if when:
-    for beer_date_time in when: 
+    for beer_date_time in when:
         dates = beer_date_time.split()
         days_of_week.append(dates[0].strip(','))
         days_of_month.append(dates[1])
         hours_min_sec = dates[4].split(':')
         hours_of_day.append(hours_min_sec[0])
-        
+
     # Days of Week Analysis
     sun = days_of_week.count('Sun')
     mon = days_of_week.count('Mon')
@@ -159,7 +211,7 @@ if when:
     print('         Sat ({:>2}) : {}'.format(sat, sat*'x'))
     print('         Sun ({:>2}) : {}'.format(sun, sun*'x'))
     print('')
-    
+
     # Hours of Day Analysis
     h6 = hours_of_day.count('06')
     h7 = hours_of_day.count('07')
@@ -309,7 +361,7 @@ if when:
         print('[!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking')
 
 else:
-    print('[-]     No recent checkin dates/times found') 
+    print('[-]     No recent checkin dates/times found')
 
 
 ###############
