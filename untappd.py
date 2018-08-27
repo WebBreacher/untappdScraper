@@ -64,7 +64,7 @@ def GetFriendData(passed_user):
     html_doc = BeautifulSoup(resp,"html.parser")
     user = html_doc.find_all('div', 'user')
     for u in user:
-        friends.append(u.text.strip())
+        friends.append(u.text.encode('ascii', 'ignore').strip())
 
     if friends:
         return friends
@@ -88,6 +88,7 @@ def GetBeersData(passed_user):
 def GetVenueData(passed_user):
     # Parsing check-in location information
     drinksLatsLongs = []
+    drinksLatsLongsTitle = []
     url = 'https://untappd.com/user/{}/venues?type=&sort=highest_checkin'.format(passed_user)
     print("\n[ ] VENUE DATA: Requesting {}".format(url))
     resp = GetDataFromUntappd(url)
@@ -102,6 +103,7 @@ def GetVenueData(passed_user):
                 # Add the correct number of visits to the lat/lon list for weighting
                 for num in range(int(venue[3])):
                     drinksLatsLongs.append(tuple(g.latlng))
+            drinksLatsLongsTitle.append([g.latlng, venue[3], venue[1]])
     else:
         print('[-] No Venue data found')
     drink_lats, drink_longs = zip(*drinksLatsLongs)
@@ -115,12 +117,15 @@ def GetVenueData(passed_user):
     '''for lat, lng in drinksLatsLongs:
         gmap.circle(lat, lng, 8000)
     gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)'''
+    for latlng, num, title in drinksLatsLongsTitle:
+        gmap.marker(latlng[0], latlng[1], title='{} beers logged at {}'.format(num, title))
     gmap.heatmap(drink_lats, drink_longs, 1, 100)
     gmap.scatter(drink_lats, drink_longs, '#333333', size=20, marker=False)
     gmap.plot(drink_lats, drink_longs, '#FF33FF', edge_width=3)
 
     outfile = 'untappd_map_{}_{}.html'.format(args.user, str(int(time.time())))
     gmap.draw(outfile)
+    print("\n[ ] HTML output file named {} was written to disk.\n".format(outfile))
 
 
 ###########################
@@ -149,7 +154,7 @@ if friends:
     print('        Name Account Location')
     print('        ------------------------------------------')
     for friend in friends:
-        print('        {:17}'.format(friend))
+        print('        {:17}'.format(friend.decode('utf-8')))
 else:
     print('[-]     No friends found')
 
