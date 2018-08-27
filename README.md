@@ -9,14 +9,26 @@ So I wondered if I could patch together some Python to scrape the [Untappd.com](
 * Where do they drink?
 * Are they "binge" drinking?
 
-# Caveat
-Since this script scrapes the public pages (private Untappd profiles are not scraped) without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
+The output from this (shown below), is output to the terminal/command line. One exception is that the GPS locations of all the places the user account reported consuming drinks at are written to an HTML output file in the current directory. You can double click on the HTML file and see a heat map of all the places that the person recorded drinking at. Could you infer where they worked and lived from this data? I'll let you guess.
+
+# Caveats
+Since this script scrapes the public pages:
+* Private Untappd profiles are not scraped
+* Without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
 
 # Usage
 ## Requirements
-- Python 3.x
-- Beautiful Soup (`pip install bs4`)
+There are some requiremented modules for this script to work. They are below. The most important of which is __this script is written in Python 3.x__. 
 
+- Python 3.x
+- bs4
+- geocoder
+- gmplot
+- requests
+
+Just type: `pip install -r requirements.txt` from the command line and your system should install all required modules.
+
+## Help command Output
 ```
 $  python untappd.py -h
 usage: untappd.py [-h] -u USER
@@ -28,10 +40,9 @@ optional arguments:
   -u USER, --user USER  Username to research
 ```
 
-# Example
-
+# Example Output
 ```
-$  python untappd.py -u nvrhapy
+$ python3 untappd.py -u nvrhapy
 
 [ ] USER DATA: Requesting https://untappd.com/user/nvrhapy
         Total Beers:    2,454
@@ -137,47 +148,45 @@ $  python untappd.py -u nvrhapy
 
 [!] *ALERT - Due to drinking 5 beers on day 19, user may be a "Binge Drinker"
 [!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.
-[!]            18:09:01
-[!]            16:22:59
-[!]            20:10:21
-[!]            17:38:35
 [!]            14:47:53
+[!]            20:10:21
+[!]            18:09:01
+[!]            17:38:35
+[!]            16:22:59
 [!]      * This script does not examine the amount of time between drinks, which is important.
 [!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
 
 [ ] VENUE DATA: Requesting https://untappd.com/user/nvrhapy/venues?type=&sort=highest_checkin
       Checkins   Name, Address
-        633      shorts house,  IL
-        304      steve and christinas,  IL
-        108      Redpac's Cocktail Lounge and Beer Bar,  2145 calistoga ave New Lenox, IL
-         57      sprout's brew haus,  IL
-         42      The Beer Dungeon,  IL
-         40      Evil Horse Brewing Company ,  1338 Main St Crete, IL
-         37      halsted & joe orr rd,  IL
-         35      Peaceful Acres Resort,  Larch Rd Ludington, MI
-         32      Steger Wildcat Football,  IL
-         31      One Trick Pony,  17845 Chappel Ave Lansing, IL
-         26      Flossmoor Station Restaurant & Brewery,  1035 Sterling Ave Flossmoor, IL
-         24      Road America,  N7390 State Road 67 Elkhart Lake, WI
-         24      Lassen's Sports Bar & Grill,  2131 183rd St Homewood, IL
-         23      Chicagoland Speedway,  500 Speedway Blvd Joliet, IL
-         22      Smokey Jo's Scratch Kitchen & Ale House,  475 W Burville Rd Crete, IL
-         18      MountainLoft Resort,  110 Mountainloft Dr Gatlinburg, TN
-         17      Rock Bottom Restaurant & Brewery,  16156 S La Grange Rd Orland Park, IL
-         17      Matts place,  IL
-         17      Steger Baseball (Veterans Park),  3599 Phillips Ave Steger, IL
-         16      Crown Brewing,  211 S East St Crown Point, IN
-         15      Northwoods Restaurant & Saloon,  968 E Steger Rd Crete, IL
-         14      Richard D. Irwin Park,  IL
-         13      The Open Bottle,  7101 183rd St, Unit 105 Tinley Park, IL
-         13      City of Chicago Heights,  IL
-         12      Eastview School,  IL
+        633      shorts house,  IL  [38.4110575, -87.75759330000001]
+        304      steve and christinas,  IL  [40.6331249, -89.3985283]
+        108      Redpac's Cocktail Lounge and Beer Bar,  2145 calistoga ave New Lenox, IL  [41.4792808, -87.95593339999999]
+         57      sprout's brew haus,  IL  None
+         42      The Beer Dungeon,  IL  [42.1857372, -88.4369487]
+         40      Evil Horse Brewing Company ,  1338 Main St Crete, IL  [41.444957, -87.631468]
+         37      halsted & joe orr rd,  IL  [41.5205964, -87.63574779999999]
+         35      Peaceful Acres Resort,  Larch Rd Ludington, MI  None
+         32      Steger Wildcat Football,  IL  [41.46785879999999, -87.6267603]
+         31      One Trick Pony,  17845 Chappel Ave Lansing, IL  [41.5711478, -87.571823]
+         26      Flossmoor Station Restaurant & Brewery,  1035 Sterling Ave Flossmoor, IL  [41.5433326, -87.67863589999999]
+         24      Road America,  N7390 State Road 67 Elkhart Lake, WI  [43.79751, -87.989963]
+         24      Lassen's Sports Bar & Grill,  2131 183rd St Homewood, IL  [41.5570125, -87.6689267]
+         23      Chicagoland Speedway,  500 Speedway Blvd Joliet, IL  [41.474828, -88.05752629999999]
+         22      Smokey Jo's Scratch Kitchen & Ale House,  475 W Burville Rd Crete, IL  [41.435353, -87.6304124]
+         18      MountainLoft Resort,  110 Mountainloft Dr Gatlinburg, TN  [35.7265932, -83.4845216]
+         17      Rock Bottom Restaurant & Brewery,  16156 S La Grange Rd Orland Park, IL  [41.5960194, -87.8531833]
+         17      Matts place,  IL  [42.244263, -88.316465]
+         17      Steger Baseball (Veterans Park),  3599 Phillips Ave Steger, IL  [41.46612229999999, -87.6284039]
+         16      Crown Brewing,  211 S East St Crown Point, IN  None
+         15      Northwoods Restaurant & Saloon,  968 E Steger Rd Crete, IL  [41.46951079999999, -87.5885505]
+         14      Richard D. Irwin Park,  IL  None
+         13      The Open Bottle,  7101 183rd St, Unit 105 Tinley Park, IL  [41.558072, -87.79042799999999]
+         13      City of Chicago Heights,  IL  [41.506146, -87.6355995]
+         12      Eastview School,  IL  [41.684709, -88.342738]
 ```
 
 # To Do
-* Triangulate where the person lives by using the places they most frequent and some fancy geolocation
 * Webify this so that it looks better and easy to access
-* See if I can get more than just the last 25 beers somehow (aside from API use)
 * Use an internal DB (sqlite?) to track users over time
 
 # License
