@@ -18,7 +18,7 @@ Since this script scrapes the public pages:
 
 # Usage
 ## Requirements
-There are some requiremented modules for this script to work. They are below. The most important of which is __this script is written in Python 3.x__. 
+There are some required modules for this script to work. They are below. The most important of which is __this script is written in Python 3.x__. 
 
 - Python 3.x
 - bs4
