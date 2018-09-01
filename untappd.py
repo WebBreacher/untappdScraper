@@ -101,7 +101,7 @@ def get_venue_data(passed_user):
                                     venue1[2].replace('\t', '').replace('\n', ''))
             g = geocoder.google(place)  # geocoder works better than the gmap method
             print('       {:>4}      {}, {} {}'.format(
-                venue1[3], venue1[1], 
+                venue1[3], venue1[1],
                 venue1[2].replace('\t', '').replace('\n', ''), g.latlng))
             if g:
                 # Add the correct number of visits to the lat/lon list for weighting
@@ -121,14 +121,15 @@ def get_venue_data(passed_user):
     """for lat, lng in drinkslatslongs:
         gmap.circle(lat, lng, 8000)
     gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)"""
+    gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
     for latlng, num, title in drinkslatslongstitle:
         try:
             gmap.marker(latlng[0], latlng[1], title='{} beers logged at {}'.format(num, title))
         except:
             pass
     gmap.heatmap(drink_lats, drink_longs, 1, 100)
-    gmap.scatter(drink_lats, drink_longs, '#333333', size=20, marker=False)
-    gmap.plot(drink_lats, drink_longs, '#FF33FF', edge_width=3)
+    gmap.scatter(drink_lats, drink_longs, '#333333', size=1, marker=False)
+    gmap.plot(drink_lats, drink_longs, '#FF33FF', edge_width=1)
 
     outfile = 'untappd_map_{}_{}.html'.format(args.user, str(int(time.time())))
     gmap.draw(outfile)
