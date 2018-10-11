@@ -1,2 +1,3 @@
-
 *.html
+*.csv
+geocode_api_keys*

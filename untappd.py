@@ -8,10 +8,12 @@ import argparse
 from bs4 import BeautifulSoup
 import geocoder
 import gmplot
+import googlemaps
 import re
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import time
+from geocode_api_keys import *
 
 
 ####
@@ -23,7 +25,7 @@ def get_mean(lst):
 
 
 # Parse command line input
-parser = argparse.ArgumentParser(description="Grab Untappd user activity")
+parser = argparse.ArgumentParser(description='Grab Untappd user activity')
 parser.add_argument('-u', '--user', required=True, help='Username to research')
 args = parser.parse_args()
 
@@ -31,7 +33,7 @@ args = parser.parse_args()
 def get_data_from_untappd(url):
     # Setting up and Making the Web Call
     try:
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0'
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:66.0) Gecko/20100101 Firefox/66.0'
         headers = {'User-Agent': user_agent}
         # Make web request for that URL and don't verify SSL/TLS certs
         response = requests.get(url, headers=headers, verify=False)
@@ -47,7 +49,7 @@ def get_user_data(passed_user):
     url = 'https://untappd.com/user/{}'.format(passed_user)
     print("\n[ ] USER DATA: Requesting {}".format(url))
     resp = get_data_from_untappd(url)
-    html_doc = BeautifulSoup(resp, "html.parser")
+    html_doc = BeautifulSoup(resp, 'html.parser')
     user1 = html_doc.find_all('span', 'stat')
 
     if user1:
@@ -60,7 +62,7 @@ def get_friend_data(passed_user):
     url = 'https://untappd.com/user/{}/friends'.format(passed_user)
     print("\n[ ] FRIEND DATA: Requesting {}".format(url))
     resp = get_data_from_untappd(url)
-    html_doc = BeautifulSoup(resp, "html.parser")
+    html_doc = BeautifulSoup(resp, 'html.parser')
     user1 = html_doc.find_all('div', 'user')
     for u in user1:
         friends1.append(u.text.encode('ascii', 'ignore').strip())
@@ -75,7 +77,7 @@ def get_beers_data(passed_user):
     url = 'https://untappd.com/user/{}/beers'.format(passed_user)
     print("\n[ ] BEER CONSUMPTION DATA: Requesting {}".format(url))
     resp = get_data_from_untappd(url)
-    html_doc = BeautifulSoup(resp, "html.parser")
+    html_doc = BeautifulSoup(resp, 'html.parser')
     beers = html_doc.find_all('abbr', 'date-time')
     for b in beers:
         beers_drank.append(b.text.strip())
@@ -88,6 +90,7 @@ def get_venue_data(passed_user):
     # Parsing check-in location information
     drinkslatslongs = []
     drinkslatslongstitle = []
+    gmaps = googlemaps.Client(key=google_api_key)
     url = 'https://untappd.com/user/{}/venues?type=&sort=highest_checkin'.format(passed_user)
     print("\n[ ] VENUE DATA: Requesting {}".format(url))
     resp = get_data_from_untappd(url)
@@ -99,15 +102,16 @@ def get_venue_data(passed_user):
         for venue1 in matchvenueobj:
             place = '{}, {}'.format(venue1[1],
                                     venue1[2].replace('\t', '').replace('\n', ''))
-            g = geocoder.google(place)  # geocoder works better than the gmap method
+            g = gmaps.geocode(place)
+            loc = g[0]['geometry']['location']['lat'], g[0]['geometry']['location']['lng']
             print('       {:>4}      {}, {} {}'.format(
                 venue1[3], venue1[1],
-                venue1[2].replace('\t', '').replace('\n', ''), g.latlng))
+                venue1[2].replace('\t', '').replace('\n', ''), loc))
             if g:
                 # Add the correct number of visits to the lat/lon list for weighting
                 for num in range(int(venue1[3])):
-                    drinkslatslongs.append(tuple(g.latlng))
-            drinkslatslongstitle.append([g.latlng, venue1[3], venue1[1]])
+                    drinkslatslongs.append(tuple(loc))
+            drinkslatslongstitle.append([loc, venue1[3], venue1[1]])
     else:
         print('[-] No Venue data found')
     drink_lats, drink_longs = zip(*drinkslatslongs)
@@ -359,4 +363,4 @@ else:
 ###############
 # Get Venue info
 ###############
-venue = get_venue_data(args.user)
+get_venue_data(args.user)
