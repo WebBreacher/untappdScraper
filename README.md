@@ -209,6 +209,11 @@ $ python3 untappd.py -u nvrhapy
          12      Eastview School,  IL  [41.684709, -88.342738]
 ```
 
+All scripts should produce HTML output files that show the geolocated content. An example is below:
+![image of sample output][example_output.png]
+
+If your web page shows "For Development Purposes Only" watermarks, you will need to edit the HTML file and add your Google API key for JavaScript Maps API. Add `key=YOUR_GOOGLE_API_KEY` to the end of the maps.googleapis.com line like this: `https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&key=YOUR_GOOGLE_API_KEY`
+
 ## To Do
 
 * Webify this so that it looks better and easy to access
