@@ -1,7 +1,9 @@
 # untappdScraper
+
 I noticed that many people on Twitter [publish when they use the Untappd.com](https://www.google.com/search?num=100&newwindow=1&q=untappd+%22i+just+earned%22+site%3Atwitter.com&oq=untappd+%22i+just+earned%22+site%3Atwitter.com&gs_l=serp.3...4164.7850.0.8239.9.9.0.0.0.0.140.679.6j2.8.0....0...1c.1.64.serp..1.3.259...33i160k1j33i21k1.7lDTNQbSBAk) application. This app allows a user to "check-in" when they drink beer. They get badges, they dates and times of their drinking is noted, and many times the geographic location of where they drank is also available.....all with no authentication! Woohoo!
 
 So I wondered if I could patch together some Python to scrape the [Untappd.com](http://untappd.com) web site for a given user and then do some analytics on their drinking habits. Stuff like:
+
 * What time of day do they drink most often?
 * What day of the week do they drink most often?
 * What day of the month do they drink most often?
@@ -11,37 +13,59 @@ So I wondered if I could patch together some Python to scrape the [Untappd.com](
 
 The output from this (shown below), is output to the terminal/command line. One exception is that the GPS locations of all the places the user account reported consuming drinks at are written to an HTML output file in the current directory. You can double click on the HTML file and see a heat map of all the places that the person recorded drinking at. Could you infer where they worked and lived from this data? I'll let you guess.
 
-# Caveats
+## Caveats
+
 Since this script scrapes the public pages:
+
 * Private Untappd profiles are not scraped
 * Without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
 
-# Usage
-## Requirements
-There are some required modules for this script to work. They are below. The most important of which is __this script is written in Python 3.x__. 
+## Usage
 
-- Python 3.x
-- bs4
-- geocoder
-- gmplot
-- requests
+### Requirements
 
-Just type: `pip install -r requirements.txt` from the command line and your system should install all required modules.
+The most important requirement is __this script is written in Python 3.x__.
+
+#### Modules
+
+* bs4
+* geocoder
+* gmplot
+* googlemaps
+* requests
+
+If you have PIP installed, type: `pip3 install -r requirements.txt` from the command line and your system should install all required modules.
+
+#### Geocoding API
+
+You will need to create a file named `geocode_api_keys.py` and put the following in it:
+
+```bash
+google_api_key = 'YOUR_GOOGLE_API_KEY'
+bing_api_key = 'YOUR_BING_API_KEY'
+```
+
+Of course this means you need to go get a valid Google Developer API key for the Geocoding
+(<https://developers.google.com/>).
+
+You also can also create a Bing API key for free at <https://www.bingmapsportal.com/>. 
 
 ## Help command Output
-```
+
+```bash
 $  python untappd.py -h
 usage: untappd.py [-h] -u USER
 
-Grab Untappd user activity
+Grab untappd user activity
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  Username to research
 ```
 
-# Example Output
-```
+## Example Output
+
+```bash
 $ python3 untappd.py -u nvrhapy
 
 [ ] USER DATA: Requesting https://untappd.com/user/nvrhapy
@@ -185,9 +209,11 @@ $ python3 untappd.py -u nvrhapy
          12      Eastview School,  IL  [41.684709, -88.342738]
 ```
 
-# To Do
+## To Do
+
 * Webify this so that it looks better and easy to access
 * Use an internal DB (sqlite?) to track users over time
 
-# License
+## License
+
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
