@@ -1,4 +1,5 @@
 bs4
 geocoder
 gmplot
+googlemaps
 requests
