@@ -90,7 +90,8 @@ def get_venue_data(passed_user):
     # Parsing check-in location information
     drinkslatslongs = []
     drinkslatslongstitle = []
-    gmaps = googlemaps.Client(key=google_api_key)
+    if google_api_key != 'GOOGLE_API_KEY':
+        gmaps = googlemaps.Client(key=google_api_key)
     url = 'https://untappd.com/user/{}/venues?type=&sort=highest_checkin'.format(passed_user)
     print("\n[ ] VENUE DATA: Requesting {}".format(url))
     resp = get_data_from_untappd(url)
@@ -102,42 +103,47 @@ def get_venue_data(passed_user):
         for venue1 in matchvenueobj:
             place = '{}, {}'.format(venue1[1],
                                     venue1[2].replace('\t', '').replace('\n', ''))
-            g = gmaps.geocode(place)
-            loc = g[0]['geometry']['location']['lat'], g[0]['geometry']['location']['lng']
+            if google_api_key != 'GOOGLE_API_KEY':
+                g = gmaps.geocode(place)
+                loc = g[0]['geometry']['location']['lat'], g[0]['geometry']['location']['lng']
+            else:
+                loc = ''
             print('       {:>4}      {}, {} {}'.format(
                 venue1[3], venue1[1],
                 venue1[2].replace('\t', '').replace('\n', ''), loc))
-            if g:
-                # Add the correct number of visits to the lat/lon list for weighting
-                for num in range(int(venue1[3])):
-                    drinkslatslongs.append(tuple(loc))
-            drinkslatslongstitle.append([loc, venue1[3], venue1[1]])
+            if google_api_key != 'GOOGLE_API_KEY':
+                if g:
+                    # Add the correct number of visits to the lat/lon list for weighting
+                    for num in range(int(venue1[3])):
+                        drinkslatslongs.append(tuple(loc))
+                drinkslatslongstitle.append([loc, venue1[3], venue1[1]])
     else:
         print('[-] No Venue data found')
-    drink_lats, drink_longs = zip(*drinkslatslongs)
+    if google_api_key != 'GOOGLE_API_KEY':
+        drink_lats, drink_longs = zip(*drinkslatslongs)
 
-    # Compute the center Lat and Long to center the map
-    center_lat = get_mean(drink_lats)
-    center_long = get_mean(drink_longs)
-    gmap = gmplot.GoogleMapPlotter(center_lat, center_long, 6)
+        # Compute the center Lat and Long to center the map
+        center_lat = get_mean(drink_lats)
+        center_long = get_mean(drink_longs)
+        gmap = gmplot.GoogleMapPlotter(center_lat, center_long, 6)
 
-    # Create the points/heatmap/circles on the map
-    """for lat, lng in drinkslatslongs:
-        gmap.circle(lat, lng, 8000)
-    gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)"""
-    gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
-    for latlng, num, title in drinkslatslongstitle:
-        try:
-            gmap.marker(latlng[0], latlng[1], title='{} beers logged at {}'.format(num, title))
-        except:
-            pass
-    gmap.heatmap(drink_lats, drink_longs, 1, 100)
-    gmap.scatter(drink_lats, drink_longs, '#333333', size=1, marker=False)
-    gmap.plot(drink_lats, drink_longs, '#FF33FF', edge_width=1)
+        # Create the points/heatmap/circles on the map
+        """for lat, lng in drinkslatslongs:
+         gmap.circle(lat, lng, 8000)
+        gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)"""
+        gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
+        for latlng, num, title in drinkslatslongstitle:
+            try:
+                gmap.marker(latlng[0], latlng[1], title='{} beers logged at {}'.format(num, title))
+            except:
+                pass
+        gmap.heatmap(drink_lats, drink_longs, 1, 100)
+        gmap.scatter(drink_lats, drink_longs, '#333333', size=1, marker=False)
+        gmap.plot(drink_lats, drink_longs, '#FF33FF', edge_width=1)
 
-    outfile = 'untappd_map_{}_{}.html'.format(args.user, str(int(time.time())))
-    gmap.draw(outfile)
-    print("\n[ ] HTML output file named {} was written to disk.\n".format(outfile))
+        outfile = 'untappd_map_{}_{}.html'.format(args.user, str(int(time.time())))
+        gmap.draw(outfile)
+        print("\n[ ] HTML output file named {} was written to disk.\n".format(outfile))
 
 
 ###########################
