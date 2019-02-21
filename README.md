@@ -38,7 +38,7 @@ If you have PIP installed, type: `pip3 install -r requirements.txt` from the com
 
 #### Geocoding API
 
-You will need to create a file named `geocode_api_keys.py` and put the following in it:
+You will need to add your Google and/or Bing API keys to the `geocode_api_keys.py` file by replacing the following content:
 
 ```bash
 google_api_key = 'YOUR_GOOGLE_API_KEY'
@@ -53,7 +53,7 @@ You also can also create a Bing API key for free at <https://www.bingmapsportal.
 ## Help command Output
 
 ```bash
-$  python untappd.py -h
+$  python3 untappd.py -h
 usage: untappd.py [-h] -u USER
 
 Grab untappd user activity
@@ -209,7 +209,7 @@ $ python3 untappd.py -u nvrhapy
          12      Eastview School,  IL  [41.684709, -88.342738]
 ```
 
-All scripts should produce HTML output files that show the geolocated content. An example is below:
+All scripts (with a valid Google/Bing API key) should produce HTML output files that show the geolocated content. An example is below:
 ![image of sample output](example_output.png)
 
 If your web page shows "For Development Purposes Only" watermarks, you will need to edit the HTML file and add your Google API key for JavaScript Maps API. Add `key=YOUR_GOOGLE_API_KEY` to the end of the maps.googleapis.com line like this: `https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&key=YOUR_GOOGLE_API_KEY`
