@@ -60,7 +60,7 @@ def get_friend_data(passed_user):
     friends1 = []
     # Parsing user friend information
     url = 'https://untappd.com/user/{}/friends'.format(passed_user)
-    print("\n[ ] FRIEND DATA: Requesting {}".format(url))
+    print("\n[ ] FRIEND DATA: Requesting 25 friends from {}".format(url))
     resp = get_data_from_untappd(url)
     html_doc = BeautifulSoup(resp, 'html.parser')
     user1 = html_doc.find_all('div', 'user')
@@ -93,22 +93,26 @@ def get_venue_data(passed_user):
     if google_api_key != 'GOOGLE_API_KEY':
         gmaps = googlemaps.Client(key=google_api_key)
     url = 'https://untappd.com/user/{}/venues?type=&sort=highest_checkin'.format(passed_user)
-    print("\n[ ] VENUE DATA: Requesting {}".format(url))
+    print("\n[ ] VENUE DATA: Requesting {}\n".format(url))
     resp = get_data_from_untappd(url)
     matchvenueobj = re.findall(
         'data-href=":view/name" href="/venue/([0-9]+)">(.+?)</a>.*?class="address">(.+?)</div>.*?Check-ins:</strong>.*?([0-9]+).*?</p>',
         resp, re.DOTALL)
     if matchvenueobj:
-        print('      {:>4}   {}, {}'.format('Checkins', 'Name', 'Address'))
+        print('      {:>5}   {}, {}'.format('Checkins', 'Name', 'Address (Geocode)'))
+        print('      --------  ----------------------------------------------------')
         for venue1 in matchvenueobj:
             place = '{}, {}'.format(venue1[1],
                                     venue1[2].replace('\t', '').replace('\n', ''))
             if google_api_key != 'GOOGLE_API_KEY':
-                g = gmaps.geocode(place)
-                loc = g[0]['geometry']['location']['lat'], g[0]['geometry']['location']['lng']
+                try:
+                    g = gmaps.geocode(place)
+                    loc = g[0]['geometry']['location']['lat'], g[0]['geometry']['location']['lng']
+                except:
+                    pass
             else:
                 loc = ''
-            print('       {:>4}      {}, {} {}'.format(
+            print('       {:>5}      {}, {} {}'.format(
                 venue1[3], venue1[1],
                 venue1[2].replace('\t', '').replace('\n', ''), loc))
             if google_api_key != 'GOOGLE_API_KEY':
@@ -129,7 +133,7 @@ def get_venue_data(passed_user):
 
         # Create the points/heatmap/circles on the map
         """for lat, lng in drinkslatslongs:
-         gmap.circle(lat, lng, 8000)
+        gmap.circle(lat, lng, 8000)
         gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)"""
         gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
         for latlng, num, title in drinkslatslongstitle:
@@ -158,7 +162,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 ###############
 user = get_user_data(args.user)
 if user:
-    print('        Total Beers:   {:>6}'.format(user[0].text))
+    print('\n        Total Beers:   {:>6}'.format(user[0].text))
     print('        Total Unique:  {:>6}'.format(user[1].text))
     print('        Total Badges:  {:>6}'.format(user[2].text))
     print('        Total Friends: {:>6}'.format(user[3].text))
@@ -168,10 +172,14 @@ if user:
 ###############
 friends = get_friend_data(args.user)
 if friends:
-    print('        Name Account Location')
-    print('        ------------------------------------------')
+    print('\n        {: ^20} {: ^18} {: ^20}'.format('Account','Name','Location'))
+    print('        -------------------- ------------------ --------------------')
     for friend in friends:
-        print('        {:17}'.format(friend.decode('utf-8')))
+        row = friend.decode('utf-8').split("\n")
+        if len(row) == 3:
+            print('        {1: <20} {0: <18} {2: <20}'.format(*row))
+        else:
+            print('        {1: <20} {0: <18}'.format(*row))
 else:
     print('[-]     No friends found')
 
@@ -349,11 +357,14 @@ if when:
                 days_of_month.count(day), day))
             print('[!]          Examine times they drank the beers below. If 5+ drinks in < 2 hours, then binge.')
             # Cycle back through the data to pull out H:M:S for beers drank on a certain day
+            times_posted = []
             for beer_date_time in when:
                 dates = beer_date_time.split()
                 if day == dates[1]:
-                    print('[!]            {}'.format(dates[4]))
-
+                    times_posted.append(dates[4])
+                    #print('[!]            {}'.format(dates[4]))
+            for tm in sorted(times_posted):
+                print('[!]            {}'.format(tm))
             binge_drink_counter += 1
     if binge_drink_counter >= 4:
         print(
