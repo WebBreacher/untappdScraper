@@ -66,33 +66,35 @@ optional arguments:
 ## Example Output
 
 ```bash
-$ python3 untappd.py -u nvrhapy
+$ python untappd.py -u nvrhapy
 
 [ ] USER DATA: Requesting https://untappd.com/user/nvrhapy
+
         Total Beers:    2,454
         Total Unique:   1,217
         Total Badges:     569
         Total Friends:     16
 
-[ ] FRIEND DATA: Requesting https://untappd.com/user/nvrhapy/friends
-        Name Account Location
-        ------------------------------------------
-        Tight Lips Jimmy  yeoldstinkeye Chicago
-        Joshua B. Supah_Set
-        Tommaso C. tommasocamilleri2 Chicago Heights, Illinois
-        Joe H. Joeheredia
-        stephany d. beerhere89
-        Jason W. Jwilson126
-        Adam F. fernicus
-        Matty G. 1MattyG Arlington Heights, IL
-        Tracey N. traceyann83
-        Fatima F. Fatabird
-        Jay M. greencape
-        Christina Z. crispix
-        Dan S. Redpac New Lenox, IL
-        Tall S. pinatax Chicago
-        russell u. sprout1880 chicago hieghts
-        Matt  1rar3br33d
+[ ] FRIEND DATA: Requesting 25 friends from https://untappd.com/user/nvrhapy/friends
+
+              Account               Name              Location
+        -------------------- ------------------ --------------------
+        yeoldstinkeye        Tight Lips Jimmy   Chicago
+        Supah_Set            Joshua B.
+        tommasocamilleri2    Tommaso C.         Chicago Heights, Illinois
+        Joeheredia           Joe H.
+        beerhere89           stephany d.
+        Jwilson126           Jason W.
+        fernicus             Adam F.
+        1MattyG              Matty G.           Arlington Heights, IL
+        traceyann83          Tracey N.
+        Fatabird             Fatima F.
+        greencape            Jay M.
+        crispix              Christina Z.
+        Redpac               Dan S.             New Lenox, IL
+        pinatax              Tall S.            Chicago
+        sprout1880           russell u.         chicago hieghts
+        1rar3br33d           Matt
 
 [ ] BEER CONSUMPTION DATA: Requesting https://untappd.com/user/nvrhapy/beers
 [*]  Drinking Patterns (Last 25 beers) - Days of Week
@@ -104,7 +106,7 @@ $ python3 untappd.py -u nvrhapy
          Thu ( 3) : xxx
          Fri ( 3) : xxx
          Sat ( 6) : xxxxxx
-         Sun (10) : xxxxxxxxxx
+         Sun (11) : xxxxxxxxxxx
 
 [*]  Drinking Patterns (Last 25 beers) - Hours of Day
          Hour  ( #) : HISTOGRAM
@@ -118,14 +120,14 @@ $ python3 untappd.py -u nvrhapy
          12:00 ( 1) : x
          13:00 ( 0) :
          14:00 ( 5) : xxxxx
-         15:00 ( 1) : x
+         15:00 ( 2) : xx
          16:00 ( 1) : x
-         17:00 ( 4) : xxxx
+         17:00 ( 5) : xxxxx
          18:00 ( 3) : xxx
          19:00 ( 6) : xxxxxx
          20:00 ( 1) : x
          21:00 ( 1) : x
-         22:00 ( 2) : xx
+         22:00 ( 1) : x
          23:00 ( 1) : x
          00:00 ( 1) : x
          01:00 ( 0) :
@@ -139,11 +141,11 @@ $ python3 untappd.py -u nvrhapy
       ---------------------------------
        00  ( 0) :
        01  ( 0) :
-       02  ( 0) :
+       02  ( 1) : x
        03  ( 0) :
-       04  ( 1) : x
+       04  ( 2) : xx
        05  ( 0) :
-       06  ( 2) : xx
+       06  ( 1) : x
        07  ( 1) : x
        08  ( 0) :
        09  ( 0) :
@@ -171,42 +173,46 @@ $ python3 untappd.py -u nvrhapy
        31  ( 1) : x
 
 [!] *ALERT - Due to drinking 5 beers on day 19, user may be a "Binge Drinker"
-[!]          Examine the times they drank these beers below. If 5+ drinks in < 2 hours, then binge.
+[!]          Examine times they drank the beers below. If 5+ drinks in < 2 hours, then binge.
 [!]            14:47:53
-[!]            20:10:21
-[!]            18:09:01
-[!]            17:38:35
 [!]            16:22:59
+[!]            17:38:35
+[!]            18:09:01
+[!]            20:10:21
 [!]      * This script does not examine the amount of time between drinks, which is important.
 [!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
 
 [ ] VENUE DATA: Requesting https://untappd.com/user/nvrhapy/venues?type=&sort=highest_checkin
-      Checkins   Name, Address
-        633      shorts house,  IL  [38.4110575, -87.75759330000001]
-        304      steve and christinas,  IL  [40.6331249, -89.3985283]
-        108      Redpac's Cocktail Lounge and Beer Bar,  2145 calistoga ave New Lenox, IL  [41.4792808, -87.95593339999999]
-         57      sprout's brew haus,  IL  None
-         42      The Beer Dungeon,  IL  [42.1857372, -88.4369487]
-         40      Evil Horse Brewing Company ,  1338 Main St Crete, IL  [41.444957, -87.631468]
-         37      halsted & joe orr rd,  IL  [41.5205964, -87.63574779999999]
-         35      Peaceful Acres Resort,  Larch Rd Ludington, MI  None
-         32      Steger Wildcat Football,  IL  [41.46785879999999, -87.6267603]
-         31      One Trick Pony,  17845 Chappel Ave Lansing, IL  [41.5711478, -87.571823]
-         26      Flossmoor Station Restaurant & Brewery,  1035 Sterling Ave Flossmoor, IL  [41.5433326, -87.67863589999999]
-         24      Road America,  N7390 State Road 67 Elkhart Lake, WI  [43.79751, -87.989963]
-         24      Lassen's Sports Bar & Grill,  2131 183rd St Homewood, IL  [41.5570125, -87.6689267]
-         23      Chicagoland Speedway,  500 Speedway Blvd Joliet, IL  [41.474828, -88.05752629999999]
-         22      Smokey Jo's Scratch Kitchen & Ale House,  475 W Burville Rd Crete, IL  [41.435353, -87.6304124]
-         18      MountainLoft Resort,  110 Mountainloft Dr Gatlinburg, TN  [35.7265932, -83.4845216]
-         17      Rock Bottom Restaurant & Brewery,  16156 S La Grange Rd Orland Park, IL  [41.5960194, -87.8531833]
-         17      Matts place,  IL  [42.244263, -88.316465]
-         17      Steger Baseball (Veterans Park),  3599 Phillips Ave Steger, IL  [41.46612229999999, -87.6284039]
-         16      Crown Brewing,  211 S East St Crown Point, IN  None
-         15      Northwoods Restaurant & Saloon,  968 E Steger Rd Crete, IL  [41.46951079999999, -87.5885505]
-         14      Richard D. Irwin Park,  IL  None
-         13      The Open Bottle,  7101 183rd St, Unit 105 Tinley Park, IL  [41.558072, -87.79042799999999]
-         13      City of Chicago Heights,  IL  [41.506146, -87.6355995]
-         12      Eastview School,  IL  [41.684709, -88.342738]
+
+      Checkins   Name, Address (Geocode)
+      --------  ----------------------------------------------------
+         633      shorts house, IL  (39.3566722, -88.4601469)
+         304      steve and christinas, IL  (40.6331249, -89.3985283)
+         108      Redpac's Cocktail Lounge and Beer Bar, 2145 calistoga ave New Lenox, IL  (41.48105899999999, -87.9570718)
+          57      sprout's brew haus, IL  (39.8018003, -89.64711720000001)
+          42      The Beer Dungeon, IL  (42.1857372, -88.4369487)
+          40      Evil Horse Brewing Company, 1338 Main St Crete, IL  (41.444957, -87.631468)
+          37      halsted & joe orr rd, IL  (41.5207079, -87.6356019)
+          35      Peaceful Acres Resort, Larch Rd Ludington, MI  (44.0051131, -86.46920539999999)
+          32      Steger Wildcat Football, IL  (41.4700348, -87.636432)
+          31      One Trick Pony, 17933 Chappel Ave Lansing, IL  (41.5711478, -87.571823)
+          26      Flossmoor Station Restaurant & Brewery, 1035 Sterling Ave Flossmoor, IL  (41.5433753, -87.6786252)
+          24      Road America, N7390 State Road 67 Elkhart Lake, WI  (43.80450510000001, -87.9868194)
+          24      Lassen's Sports Bar & Grill, 2131 183rd St Homewood, IL  (41.5570125, -87.6689267)
+          23      Chicagoland Speedway, 500 Speedway Blvd Joliet, IL  (41.4749519, -88.0573003)
+          22      Smokey Jo's Scratch Kitchen & Ale House, 475 W Burville Rd Crete, IL  (41.435353, -87.6304124)
+          18      MountainLoft Resort, 110 Mountainloft Dr Gatlinburg, TN  (35.7306579, -83.4827645)
+          17      Rock Bottom - Orland Park, 16156 South La Grange Road Orland Park, IL  (41.5960194, -87.8531833)
+          17      Matts place, IL  (42.244263, -88.316465)
+          17      Steger Baseball (Veterans Park), 3599 Phillips Ave Steger, IL  (41.4660376, -87.6304869)
+          16      Crown Brewing, 211 S East St Crown Point, IN  (41.4158226, -87.36357629999999)
+          15      Northwoods Restaurant & Saloon, 968 E Steger Rd Crete, IL  (41.46951079999999, -87.5885505)
+          14      Richard D. Irwin Park, IL  (41.56096290000001, -87.6621203)
+          13      The Open Bottle, 7101 183rd St, Unit 105 Tinley Park, IL  (41.5580442, -87.79042849999999)
+          13      City of Chicago Heights, IL  (41.502062, -87.6399599)
+          12      Eastview School, IL  (42.1572088, -88.2829004)
+
+[ ] HTML output file named untappd_map_nvrhapy_1557162596.html was written to disk.
 ```
 
 All scripts (with a valid Google/Bing API key) should produce HTML output files that show the geolocated content. An example is below:
@@ -218,6 +224,7 @@ If your web page shows "For Development Purposes Only" watermarks, you will need
 
 * Webify this so that it looks better and easy to access
 * Use an internal DB (sqlite?) to track users over time
+* Colorize output
 
 ## License
 
