@@ -26,6 +26,7 @@ def get_mean(lst):
 
 # Parse command line input
 parser = argparse.ArgumentParser(description='Grab Untappd user activity')
+parser.add_argument('-b', '--beers', action='store_true', help='Just dump the last beers they logged')
 parser.add_argument('-u', '--user', required=True, help='Username to research')
 args = parser.parse_args()
 
@@ -33,7 +34,7 @@ args = parser.parse_args()
 def get_data_from_untappd(url):
     # Setting up and Making the Web Call
     try:
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:66.0) Gecko/20100101 Firefox/66.0'
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:66.0) Gecko/20100101 Firefox/69.0'
         headers = {'User-Agent': user_agent}
         # Make web request for that URL and don't verify SSL/TLS certs
         response = requests.get(url, headers=headers, verify=False)
@@ -79,6 +80,21 @@ def get_beers_data(passed_user):
     resp = get_data_from_untappd(url)
     html_doc = BeautifulSoup(resp, 'html.parser')
     beers = html_doc.find_all('abbr', 'date-time')
+    for b in beers:
+        beers_drank.append(b.text.strip())
+
+    if beers_drank:
+        return beers_drank
+
+
+def get_beersonly_data(passed_user):
+    beers_drank = []
+    # Parsing user beer information
+    url = 'https://untappd.com/user/{}/'.format(passed_user)
+    print("\n[ ] BEER LOCATION DATA: Requesting {}\n".format(url))
+    resp = get_data_from_untappd(url)
+    html_doc = BeautifulSoup(resp, 'html.parser')
+    beers = html_doc.find_all('div', 'checkin')
     for b in beers:
         beers_drank.append(b.text.strip())
 
@@ -132,9 +148,6 @@ def get_venue_data(passed_user):
         gmap = gmplot.GoogleMapPlotter(center_lat, center_long, 6)
 
         # Create the points/heatmap/circles on the map
-        """for lat, lng in drinkslatslongs:
-        gmap.circle(lat, lng, 8000)
-        gmap.scatter(drink_lats, drink_longs, '#FFFFFF', 8000, marker=False)"""
         gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
         for latlng, num, title in drinkslatslongstitle:
             try:
@@ -166,6 +179,15 @@ if user:
     print('        Total Unique:  {:>6}'.format(user[1].text))
     print('        Total Badges:  {:>6}'.format(user[2].text))
     print('        Total Friends: {:>6}'.format(user[3].text))
+
+if args.beers:
+    # Just grab the beers they logged and print them
+    beers = get_beersonly_data(args.user)
+    for beer in beers:
+        locations = re.findall(r'is drinking.*?at (.+?)\n.*([0-9][0-9] [A-Z][a-z][a-z] [0-9][0-9][0-9][0-9] [0-9][0-9]\:[0-9][0-9]\:[0-9][0-9])', beer, re.MULTILINE|re.DOTALL)
+        for content in locations:
+            print('    {} - {}'.format(content[1], content[0]))
+    exit()
 
 ###############
 # Get friends of target
