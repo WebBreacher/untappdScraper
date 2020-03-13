@@ -1,28 +1,26 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
     Author: Micah Hoffman (@WebBreacher)
     Purpose: To look up a user on Untappd.com and provide drinking profile
 """
 
 import argparse
-from bs4 import BeautifulSoup
 import geocoder
 import gmplot
 import googlemaps
 import re
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import time
+
+from bs4 import BeautifulSoup
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
 from geocode_api_keys import *
 
 
 ####
 # Functions
 ####
-
-def get_mean(lst):
-    return float(sum(lst) / len(lst))
-
 
 # Parse command line input
 parser = argparse.ArgumentParser(description='Grab Untappd user activity')
@@ -31,10 +29,14 @@ parser.add_argument('-u', '--user', required=True, help='Username to research')
 args = parser.parse_args()
 
 
+def get_mean(lst):
+    return float(sum(lst) / len(lst))
+
+
 def get_data_from_untappd(url):
     # Setting up and Making the Web Call
     try:
-        user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:66.0) Gecko/20100101 Firefox/69.0'
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0'
         headers = {'User-Agent': user_agent}
         # Make web request for that URL and don't verify SSL/TLS certs
         response = requests.get(url, headers=headers, verify=False)
@@ -52,7 +54,6 @@ def get_user_data(passed_user):
     resp = get_data_from_untappd(url)
     html_doc = BeautifulSoup(resp, 'html.parser')
     user1 = html_doc.find_all('span', 'stat')
-
     if user1:
         return user1
 
@@ -67,7 +68,6 @@ def get_friend_data(passed_user):
     user1 = html_doc.find_all('div', 'user')
     for u in user1:
         friends1.append(u.text.encode('ascii', 'ignore').strip())
-
     if friends1:
         return friends1
 
@@ -82,7 +82,6 @@ def get_beers_data(passed_user):
     beers = html_doc.find_all('abbr', 'date-time')
     for b in beers:
         beers_drank.append(b.text.strip())
-
     if beers_drank:
         return beers_drank
 
@@ -97,7 +96,6 @@ def get_beersonly_data(passed_user):
     beers = html_doc.find_all('div', 'checkin')
     for b in beers:
         beers_drank.append(b.text.strip())
-
     if beers_drank:
         return beers_drank
 
@@ -135,7 +133,7 @@ def get_venue_data(passed_user):
                 if g:
                     # Add the correct number of visits to the lat/lon list for weighting
                     for num in range(int(venue1[3])):
-                        drinkslatslongs.append(tuple(loc))
+                                         drinkslatslongs.append(tuple(loc))
                 drinkslatslongstitle.append([loc, venue1[3], venue1[1]])
     else:
         print('[-] No Venue data found')
@@ -395,7 +393,6 @@ if when:
         print('[!]      * This script does not examine the amount of time between drinks, which is important.')
         print(
             '[!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking')
-
 else:
     print('[-]     No recent check-in dates/times found')
 
