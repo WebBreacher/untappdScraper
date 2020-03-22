@@ -1,0 +1,34 @@
+{
+  "name": "untappd-scraper-web",
+  "version": "1.0.0",
+  "description": "Retrieve open-source intelligence from Untappd.com",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "eslint .",
+    "start": "next start"
+  },
+  "keywords": [
+    "untappd",
+    "osint"
+  ],
+  "author": "Micah Hoffman (@WebBreacher) and Brandon Evans (@BrandonMaxEvans)",
+  "license": "LicenseRef-LICENSE",
+  "repository": "github:WebBreacher/untappdScraper",
+  "dependencies": {
+    "axios": "0.19.2",
+    "cheerio": "1.0.0-rc.3",
+    "next": "9.3.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
+  },
+  "devDependencies": {
+    "eslint": "6.8.0",
+    "eslint-config-standard": "14.1.1",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-node": "11.0.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-react": "7.19.0",
+    "eslint-plugin-standard": "4.0.1"
+  }
+}
