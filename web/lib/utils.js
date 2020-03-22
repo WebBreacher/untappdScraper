@@ -1,5 +1,6 @@
 import * as axios from 'axios'
 import * as cheerio from 'cheerio'
+import * as moment from 'moment'
 
 const baseUrl = 'https://cors-anywhere.herokuapp.com/https://untappd.com'
 
@@ -7,7 +8,7 @@ const getUserDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}`)
 
   if (res.status !== 200) {
-    throw new Error('Could not fetch user data!')
+    throw new Error('Could not fetch user data.')
   }
 
   return cheerio.load(res.data)
@@ -17,7 +18,7 @@ const getFriendsDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}/friends`)
 
   if (res.status !== 200) {
-    throw new Error('Could not fetch friends data!')
+    throw new Error('Could not fetch friends data.')
   }
 
   return cheerio.load(res.data)
@@ -27,7 +28,7 @@ const getBeersDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}/beers`)
 
   if (res.status !== 200) {
-    throw new Error('Could not fetch beers data!')
+    throw new Error('Could not fetch beers data.')
   }
 
   return cheerio.load(res.data)
@@ -37,25 +38,24 @@ const getVenuesDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}/venues?type=&sort=highest_checkin`)
 
   if (res.status !== 200) {
-    throw new Error('Could not fetch venue data!')
+    throw new Error('Could not fetch venue data.')
   }
 
   return cheerio.load(res.data)
 }
-
 
 const parseStats = $ => {
   const stats = {}
   const statElements = $('.stat')
 
   if (!statElements || statElements.length !== 4) {
-    throw new Error('Could not parse stats data!')
+    throw new Error('Could not parse stats data.')
   }
 
   const statsArray = []
 
   statElements.each((i, statElement) => {
-    statsArray.push(parseInt($(statElement).text(), 10))
+    statsArray.push(parseInt($(statElement).text().replace(/,/g, ''), 10))
   })
 
   stats.totalBeers = statsArray[0]
@@ -66,25 +66,55 @@ const parseStats = $ => {
   return stats
 }
 
-export const parseBeersFromUser = $ => {
-  const beers = []
-  const checkInElements = $('.checkin .top .text')
+export const parseRecentActivity = $ => {
+  const recentActivity = []
+  const checkInElements = $('.checkin')
 
   checkInElements.each((i, checkInElement) => {
-    const checkInText = $(checkInElement).text()
-    const details = /is drinking an?(.*)by(.*)/.exec(checkInText)
+    const activity = {}
+    const checkInTopText = $(checkInElement).find('.top .text')
+    const checkInBottomLinks = $(checkInElement).find('.bottom a')
 
-    if (!details || !details.length === 3) {
-      throw new Error('Could not parse check-in data!')
+    if (!checkInTopText || !checkInBottomLinks || checkInBottomLinks.length === 0) {
+      throw new Error('Could not parse check-in data.')
     }
 
-    beers.push({
-      type: details[1],
-      brewery: details[2]
-    })
+    const checkInText = checkInTopText.text()
+    const checkInTime = $(checkInBottomLinks[0]).text()
+
+    if (!checkInTime) {
+      throw new Error('Could not parse check-in time.')
+    }
+
+    activity.time = moment.utc(checkInTime)
+
+    let parts = checkInText.split(' is drinking an ')
+
+    if (parts.length === 1) {
+      parts = checkInText.split(' is drinking a ')
+    }
+
+    if (parts.length === 1) {
+      throw new Error('Could not parse check-in drink.')
+    }
+
+    parts = parts[1].split(' by ')
+    activity.beer = parts[0]
+
+    if (parts.length === 2) {
+      parts = parts[1].split(' at ')
+
+      activity.brewery = parts[0]
+
+      if (parts.length === 2) {
+        activity.location = parts[1]
+      }
+    }
+
+    recentActivity.push(activity)
   })
 
-  return beers
+  return recentActivity
 }
 
 const parseFriends = $ => {
@@ -118,7 +148,7 @@ const parseVenues = $ => {
     const venueDetailsElement = $(venueElement).find('.venue-details')
 
     if (!venueDetailsElement) {
-      throw new Error('Could not parse venue data!')
+      throw new Error('Could not parse venue data.')
     }
 
     const nameElement = $(venueDetailsElement).find('.name a')
@@ -135,14 +165,14 @@ const parseVenues = $ => {
   return venues
 }
 
-export const getUntappdOsint = async (username, beersOnly) => {
-  const data = {}
+export const getUntappdOsint = async (username, recentActivityOnly) => {
+  const data = {username}
 
   const userDom = await getUserDom(username)
   data.stats = parseStats(userDom)
 
-  if (beersOnly) {
-    data.beers = parseBeersFromUser(userDom)
+  if (recentActivityOnly) {
+    data.recentActivity = parseRecentActivity(userDom)
     return data
   }
 
