@@ -221,9 +221,10 @@ const geocodeAddresses = async (googleMapsClient, venues) => {
   https://developers.google.com/maps/premium/previous-licenses/articles/usage-limits#throttle
   */
   const batchSize = 10
+  let i = 0
 
-  while (venues.length > 0) {
-    const batch = venues.splice(0, batchSize)
+  while (i < venues.length) {
+    const batch = venues.slice(i, i + batchSize)
     const promises = []
 
     for (let venue of batch) {
@@ -232,7 +233,9 @@ const geocodeAddresses = async (googleMapsClient, venues) => {
 
     await Promise.all(promises)
 
-    if (venues.length > 0) {
+    i += batchSize
+
+    if (i < venues.length) {
       await new Promise(resolve => {
         // The query limit appears to take much longer to reset than 1 second. Wait 10.
         setTimeout(resolve, 10000)
