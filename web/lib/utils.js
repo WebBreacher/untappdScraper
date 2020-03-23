@@ -1,6 +1,7 @@
 import * as axios from 'axios'
 import * as cheerio from 'cheerio'
 import * as moment from 'moment'
+import { Loader } from '@googlemaps/loader'
 
 const baseUrl = 'https://cors-anywhere.herokuapp.com/https://untappd.com'
 
@@ -200,7 +201,16 @@ const geocodeAddress = async (geocoder, venue) => new Promise((resolve, reject) 
     address: venue.address
   }, function (results, status) {
     if (status !== 'OK') {
-      reject(new Error(status))
+      if (status === 'OVER_QUERY_LIMIT') {
+        // Retry after 1 second.
+        setTimeout(() => {
+          geocodeAddress(geocoder, venue)
+            .then(resolve)
+            .catch(reject)
+        }, 1000)
+      } else {
+        reject(new Error(status))
+      }
     } else {
       venue.geocode = results
       resolve()
@@ -215,33 +225,64 @@ const geocodeAddresses = async (googleMapsClient, venues) => {
   }
 
   const geocoder = new googleMapsClient.maps.Geocoder()
+  const promises = []
 
-  /*
-  Google Maps allows 10 queries per second:
-  https://developers.google.com/maps/premium/previous-licenses/articles/usage-limits#throttle
-  */
-  const batchSize = 10
-  let i = 0
+  for (let venue of venues) {
+    promises.push(geocodeAddress(geocoder, venue))
+  }
 
-  while (i < venues.length) {
-    const batch = venues.slice(i, i + batchSize)
-    const promises = []
+  await Promise.all(promises)
+}
 
-    for (let venue of batch) {
-      promises.push(geocodeAddress(geocoder, venue))
-    }
+const displayGoogleMap = (googleMapsClient, venues) => {
+  const latLngs = []
+  const markers = []
+  const heatmapData = []
 
-    await Promise.all(promises)
+  for (let venue of venues) {
+    if (venue.geocode) {
+      const latLng = {
+        lat: venue.geocode[0].geometry.location.lat(),
+        lng: venue.geocode[0].geometry.location.lng()
+      }
 
-    i += batchSize
+      latLngs.push(latLng)
 
-    if (i < venues.length) {
-      await new Promise(resolve => {
-        // The query limit appears to take much longer to reset than 1 second. Wait 10.
-        setTimeout(resolve, 10000)
+      markers.push(
+        new googleMapsClient.maps.Marker({
+          position: latLng,
+          title: `${venue.checkIns} beers logged at ${venue.name}`
+        })
+      )
+
+      heatmapData.push({
+        location: new googleMapsClient.maps.LatLng(latLng.lat, latLng.lng),
+        weight: venue.checkIns
       })
     }
   }
+
+  const center = {
+    lat: latLngs.map(latLng => latLng.lat).reduce((a, b) => a + b, 0) / latLngs.length,
+    lng: latLngs.map(latLng => latLng.lng).reduce((a, b) => a + b, 0) / latLngs.length
+  }
+
+  const map = new googleMapsClient.maps.Map(document.getElementById('map'), {
+    center,
+    zoom: 4
+  });
+
+  for (let marker of markers) {
+    marker.setMap(map)
+  }
+
+  new googleMapsClient.maps.visualization.HeatmapLayer({
+    data: heatmapData,
+    map,
+    dissipating: false
+  });
+
+  return map
 }
 
 export const getUntappdOsint = async (username, recentActivityOnly, googleMapsClient) => {
@@ -267,7 +308,18 @@ export const getUntappdOsint = async (username, recentActivityOnly, googleMapsCl
 
   if (googleMapsClient) {
     await geocodeAddresses(googleMapsClient, data.venues)
+    data.map = displayGoogleMap(googleMapsClient, data.venues)
   }
 
   return data
+}
+
+export const loadGoogleMapsClient = async (googleMapsApiKey) => {
+  const loader = new Loader({
+    apiKey: googleMapsApiKey,
+    version: 'weekly',
+    libraries: ['visualization']
+  })
+
+  await loader.load()
 }

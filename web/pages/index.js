@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { getUntappdOsint } from '../lib/utils'
-import { Loader } from '@googlemaps/loader'
+import { getUntappdOsint, loadGoogleMapsClient } from '../lib/utils'
 
 export default class Index extends Component {
   constructor () {
@@ -72,7 +71,7 @@ export default class Index extends Component {
     }
   }
 
-  async loadGoogleMapsClient (e) {
+  async setupGoogleMapsClient (e) {
     e.preventDefault()
 
     this.setState({
@@ -84,12 +83,7 @@ export default class Index extends Component {
 
     if (googleMapsApiKey) {
       try {
-        const loader = new Loader({
-          apiKey: googleMapsApiKey,
-          version: 'weekly'
-        })
-
-        await loader.load()
+        await loadGoogleMapsClient(googleMapsApiKey)
 
         this.setState({
           googleMapsClient: google,
@@ -191,7 +185,12 @@ export default class Index extends Component {
                   <tr key={index}>
                     <td>{venue.name}</td>
                     <td>{venue.checkIns}</td>
-                    <td>{venue.address}</td>
+                    <td>
+                      {venue.address}
+                      {venue.geocode &&
+                        <div>({venue.geocode[0].geometry.location.lat()}, {venue.geocode[0].geometry.location.lng()})</div>
+                      }
+                    </td>
                     <td>{venue.firstVisitDate}</td>
                     <td>{venue.lastVisitDate}</td>
                   </tr>
@@ -201,16 +200,20 @@ export default class Index extends Component {
           </div>
         }
 
+        <div style={{height: (this.state.data && this.state.data.map) ? '400px' : 0}}>
+          <div id="map"></div>
+        </div>
+
         <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
           <p>Username: <input type="text" value={this.state.username} onChange={e => { this.updateUsername(e) }} /></p>
           <p>Recent Activity Only: <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} /></p>
           <input type="submit" value="Get Untappd OSINT" disabled={this.state.submitting} />
         </form>
 
-        <form onSubmit={e => { this.loadGoogleMapsClient(e) }}>
+        <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
           <p>Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.</p>
 
-          <p>Google Maps API Key: <input type="text" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} /></p>
+          <p>Google Maps API Key: <input type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} /></p>
 
           <input type="submit" value="Set Google Maps API Key" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
 
