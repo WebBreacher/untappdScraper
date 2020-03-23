@@ -1,6 +1,6 @@
 import * as axios from 'axios'
 import * as cheerio from 'cheerio'
-import * as moment from 'moment'
+import * as moment from 'moment-timezone'
 import { Loader } from '@googlemaps/loader'
 
 const baseUrl = 'https://cors-anywhere.herokuapp.com/https://untappd.com'
@@ -46,7 +46,7 @@ const getVenuesDom = async username => {
 }
 
 const parseNumber = num =>
-  parseInt(num.replace(/,/g, ''), 10)
+  (num) ? parseInt(num.replace(/,/g, ''), 10) : NaN
 
 const parseStats = $ => {
   const stats = {}
@@ -148,15 +148,92 @@ const parseFriends = $ => {
   return friends
 }
 
+const updateDrinkHistogram = (beerData, drinkTime) => {
+  const dayOfWeek = drinkTime.format('ddd')
+
+  // eslint-disable-next-line no-prototype-builtins
+  if (!beerData.dayOfWeek.hasOwnProperty(dayOfWeek)) {
+    beerData.dayOfWeek[dayOfWeek] = 0
+  }
+
+  beerData.dayOfWeek[dayOfWeek]++
+
+  const hourOfDay = parseNumber(drinkTime.format('H'))
+
+  // eslint-disable-next-line no-prototype-builtins
+  if (!beerData.hourOfDay.hasOwnProperty(hourOfDay)) {
+    beerData.hourOfDay[hourOfDay] = 0
+  }
+
+  beerData.hourOfDay[hourOfDay]++
+
+  const dayOfMonth = parseNumber(drinkTime.format('D'))
+
+  // eslint-disable-next-line no-prototype-builtins
+  if (!beerData.dayOfMonth.hasOwnProperty(dayOfMonth)) {
+    beerData.dayOfMonth[dayOfMonth] = 0
+  }
+
+  beerData.dayOfMonth[dayOfMonth]++
+}
+
 const parseBeers = $ => {
-  return null
+  const beerData = {
+    beers: [],
+    dayOfWeek: {},
+    hourOfDay: {},
+    dayOfMonth: {}
+  }
+
+  const beerElements = $('.beer-item')
+
+  beerElements.each((i, beerElement) => {
+    const nameElement = $(beerElement).find('.name a')
+    const breweryElement = $(beerElement).find('.brewery')
+    const styleElement = $(beerElement).find('.style')
+    const abvElement = $(beerElement).find('.abv')
+    const ibuElement = $(beerElement).find('.ibu')
+    const checkInsElement = $(beerElement).find('.check-ins')
+
+    if (!nameElement || !breweryElement || !styleElement || !abvElement || !ibuElement) {
+      throw new Error('Could not parse beer details data.')
+    }
+
+    const dateElements = $(beerElement).find('.date a .date-time')
+
+    if (dateElements.length !== 2) {
+      throw new Error('Could not parse beer dates.')
+    }
+
+    const firstDrinkTime = moment($(dateElements[0]).text())
+    const lastDrinkTime = moment($(dateElements[1]).text())
+
+    beerData.beers.push({
+      name: $(nameElement).text(),
+      brewery: $(breweryElement).text(),
+      style: $(styleElement).text(),
+      abv: $(abvElement).text(),
+      ibu: $(ibuElement).text(),
+      firstDrinkTime,
+      lastDrinkTime,
+      checkIns: parseNumber($(checkInsElement).text().split('Total: ')[1])
+    })
+
+    updateDrinkHistogram(beerData, firstDrinkTime)
+
+    if (firstDrinkTime.diff(lastDrinkTime) !== 0) {
+      updateDrinkHistogram(beerData, lastDrinkTime)
+    }
+  })
+
+  return beerData
 }
 
 const parseVenues = $ => {
   const venues = []
   const venueElements = $('.venue-item')
 
-  venueElements.each(async (i, venueElement) => {
+  venueElements.each((i, venueElement) => {
     const venueDetailsElement = $(venueElement).find('.venue-details')
 
     if (!venueDetailsElement) {
@@ -303,7 +380,8 @@ export const getUntappdOsint = async (username, recentActivityOnly, googleMapsCl
   ])
 
   data.friends = parseFriends(friendsDom)
-  data.beers = parseBeers(beersDom)
+  data.beerData = parseBeers(beersDom)
+  console.log(data.beerData)
   data.venues = parseVenues(venuesDom)
 
   if (googleMapsClient) {

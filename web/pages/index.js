@@ -1,6 +1,40 @@
 import React, { Component } from 'react'
 import { getUntappdOsint, loadGoogleMapsClient } from '../lib/utils'
 
+const timeFormat = 'DD MMM YY HH:mm:ss Z'
+
+const sortNumberEntries = (a, b) => {
+  const aNumber = parseInt(a[0], 10)
+  const bNumber = parseInt(b[0], 10)
+
+  if (aNumber[0] < bNumber[0]) {
+    return -1
+  }
+
+  if (aNumber[0] > bNumber[0]) {
+    return 1
+  }
+
+  return 0
+}
+
+const sortDayEntries = (a, b) => {
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  const aIndex = daysOfWeek.indexOf(a[0])
+  const bIndex = daysOfWeek.indexOf(b[0])
+
+  if (aIndex < bIndex) {
+    return -1
+  }
+
+  if (aIndex > bIndex) {
+    return 1
+  }
+
+  return 0
+}
+
 export default class Index extends Component {
   constructor () {
     super()
@@ -156,7 +190,7 @@ export default class Index extends Component {
               <tbody>
                 {this.state.data.recentActivity.map((activity, index) =>
                   <tr key={index}>
-                    <td>{activity.time.format('DD MMM YY HH:mm:ss')}</td>
+                    <td>{activity.time.format(timeFormat)}</td>
                     <td>{activity.beer}</td>
                     <td>{activity.brewery}</td>
                     <td>{activity.location}</td>
@@ -198,6 +232,120 @@ export default class Index extends Component {
                 )}
               </tbody>
             </table>
+          </div>
+        }
+
+        {this.state.data && this.state.data.beerData &&
+          <div>
+            {this.state.data && this.state.data.beerData.beers &&
+              <div>
+                <p>Beers:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Brewery</th>
+                      <th>Style</th>
+                      <th>ABV</th>
+                      <th>IBU</th>
+                      <th>First Drank at Time</th>
+                      <th>Last Drank at Time</th>
+                      <th>Total Drinks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.data.beerData.beers.map((beer, index) =>
+                      <tr key={index}>
+                        <td>{beer.name}</td>
+                        <td>{beer.brewery}</td>
+                        <td>{beer.style}</td>
+                        <td>{beer.abv}</td>
+                        <td>{beer.ibu}</td>
+                        <td>{beer.firstDrinkTime.format(timeFormat)}</td>
+                        <td>{beer.lastDrinkTime.format(timeFormat)}</td>
+                        <td>{beer.checkIns}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerData.dayOfWeek &&
+              <div>
+                <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Day of Week</th>
+                      <th>Number of Drinks</th>
+                      <th>Tally</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(this.state.data.beerData.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
+                      <tr key={index}>
+                        <td>{entry[0]}</td>
+                        <td>{entry[1]}</td>
+                        <td>{'x'.repeat(entry[1])}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerData.hourOfDay &&
+              <div>
+                <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Hour of Day</th>
+                      <th>Number of Drinks</th>
+                      <th>Tally</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(this.state.data.beerData.hourOfDay).sort(sortNumberEntries).map((entry, index) =>
+                      <tr key={index}>
+                        <td>{entry[0]}</td>
+                        <td>{entry[1]}</td>
+                        <td>{'x'.repeat(entry[1])}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerData.dayOfMonth &&
+              <div>
+                <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Day of Month</th>
+                      <th>Number of Drinks</th>
+                      <th>Tally</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(this.state.data.beerData.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
+                      <tr key={index}>
+                        <td>{entry[0]}</td>
+                        <td>{entry[1]}</td>
+                        <td>{'x'.repeat(entry[1])}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
           </div>
         }
 
