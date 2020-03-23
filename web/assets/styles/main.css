@@ -1,0 +1,86 @@
+@import './reset.css';
+@import './colors.css';
+
+/* 
+COLORS:
+    --yellow-color: #fcc000;
+    --white-color: #ffffff;
+    --light-grey: #D0CFCE;
+    --seaBlue-color: #008ABF;
+    --darkBlue-color: #244151;
+    --green-color: #329665;
+    --red-color: #E25249;
+*/
+/* after a search is complete display content 300px below the search bar for now, eventually change the search bar into a collapseable menu */
+.container {
+  position: relative;
+  top: 300px;
+}
+/* TOP SEARCH COMPONENT */
+.container .entryForm form {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  min-height: 50px;
+  background-color: var(--white-color);
+  border-bottom: 2px solid var(--light-grey);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 1rem;
+  font-size: 12px;
+}
+/*Logo is injected into an empty div*/
+#logo {
+  margin: 0 auto;
+  background-image: url('./../logos/untappedScraperLogo.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  min-width: 201px;
+  min-height: 204px;
+}
+/* Search for username input bar */
+.username-input {
+width: 83.5%;
+height: 45px;
+margin-right: 5px;
+padding: 0 20px;
+font-size: 1rem;
+border: 1px solid var(--light-grey);
+outline: none;
+}
+.username-input:focus{
+border: 1px solid var(--seaBlue-color);
+transition: 0.35s ease;
+color: var(--darkBlue-color);
+}
+  
+.username-input:-webkit-input-placeholder{
+transition: opacity 0.45s ease; 
+opacity: 0;
+}
+
+.username-input:-moz-placeholder {
+transition: opacity 0.45s ease; 
+opacity: 0;
+}
+.username-input:-ms-placeholder {
+transition: opacity 0.45s ease; 
+opacity: 0;
+}
+
+/* Search submit button */
+.submit-button{
+  margin-left: auto;
+  background-color: var(--yellow-color);
+  width: 75px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--white-color);
+}
+table {
+  width: 100%;
+  border: 4px solid black;
+}

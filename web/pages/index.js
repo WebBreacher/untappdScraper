@@ -63,7 +63,7 @@ export default class Index extends Component {
 
   render () {
     return (
-      <div>
+      <div className="container">
         {this.state.error &&
           <strong>{this.state.error}</strong>
         }
@@ -126,11 +126,15 @@ export default class Index extends Component {
           <div><br />{JSON.stringify(this.state.data)}</div>
         }
 
-        <form onSubmit={e => { this.getUntappdOsint(e) }}>
-          <p>Username: <input type="text" value={this.state.username} onChange={e => { this.updateUsername(e) }} /></p>
-          <p>Recent Activity Only: <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} /></p>
-          <input type="submit" value="Test" disabled={this.state.submitting} />
-        </form>
+        <div className="entryForm">
+          <form onSubmit={e => { this.getUntappdOsint(e) }}>
+          <div id="logo"></div>
+          <input className="username-input" placeholder="Search for a user" type="text" value={this.state.username} onChange={e => { this.updateUsername  (e) }} />
+          <label>Recent activity only</label>
+          <input type="checkbox" value={this.state.recentActivityOnly} onChange=   {e => { this.updateRecentActivityOnly(e) }} />
+          <input className="submit-button" type="submit" value="Search" disabled={this.state.submitting} />
+          </form>
+        </div>
       </div>
     )
   }
