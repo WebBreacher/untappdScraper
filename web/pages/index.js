@@ -128,7 +128,6 @@ export default class Index extends Component {
 
         <div className="entryForm">
           <form onSubmit={e => { this.getUntappdOsint(e) }}>
-          <div id="logo"></div>
           <input className="username-input" placeholder="Search for a user" type="text" value={this.state.username} onChange={e => { this.updateUsername  (e) }} />
           <label>Recent activity only</label>
           <input type="checkbox" value={this.state.recentActivityOnly} onChange=   {e => { this.updateRecentActivityOnly(e) }} />

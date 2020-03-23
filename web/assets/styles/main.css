@@ -31,15 +31,7 @@ COLORS:
   padding: 1rem;
   font-size: 12px;
 }
-/*Logo is injected into an empty div*/
-#logo {
-  margin: 0 auto;
-  background-image: url('./../logos/untappedScraperLogo.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  min-width: 201px;
-  min-height: 204px;
-}
+
 /* Search for username input bar */
 .username-input {
 width: 83.5%;
