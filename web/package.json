@@ -16,6 +16,7 @@
   "license": "LicenseRef-LICENSE",
   "repository": "github:WebBreacher/untappdScraper",
   "dependencies": {
+    "@googlemaps/loader": "0.0.7",
     "axios": "0.19.2",
     "cheerio": "1.0.0-rc.3",
     "moment": "2.24.0",

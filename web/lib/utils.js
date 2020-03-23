@@ -44,6 +44,9 @@ const getVenuesDom = async username => {
   return cheerio.load(res.data)
 }
 
+const parseNumber = num =>
+  parseInt(num.replace(/,/g, ''), 10)
+
 const parseStats = $ => {
   const stats = {}
   const statElements = $('.stat')
@@ -55,7 +58,7 @@ const parseStats = $ => {
   const statsArray = []
 
   statElements.each((i, statElement) => {
-    statsArray.push(parseInt($(statElement).text().replace(/,/g, ''), 10))
+    statsArray.push(parseNumber($(statElement).text()))
   })
 
   stats.totalBeers = statsArray[0]
@@ -70,49 +73,53 @@ export const parseRecentActivity = $ => {
   const recentActivity = []
   const checkInElements = $('.checkin')
 
-  checkInElements.each((i, checkInElement) => {
-    const activity = {}
-    const checkInTopText = $(checkInElement).find('.top .text')
-    const checkInBottomLinks = $(checkInElement).find('.bottom a')
+  try {
+    checkInElements.each((i, checkInElement) => {
+      const activity = {}
+      const checkInTopText = $(checkInElement).find('.top .text')
+      const checkInBottomLinks = $(checkInElement).find('.bottom a')
 
-    if (!checkInTopText || !checkInBottomLinks || checkInBottomLinks.length === 0) {
-      throw new Error('Could not parse check-in data.')
-    }
+      if (!checkInTopText || !checkInBottomLinks || checkInBottomLinks.length === 0) {
+        throw new Error('Could not parse check-in data.')
+      }
 
-    const checkInText = checkInTopText.text()
-    const checkInTime = $(checkInBottomLinks[0]).text()
+      const checkInText = checkInTopText.text()
+      const checkInTime = $(checkInBottomLinks[0]).text()
 
-    if (!checkInTime) {
-      throw new Error('Could not parse check-in time.')
-    }
+      if (!checkInTime) {
+        throw new Error('Could not parse check-in time.')
+      }
 
-    activity.time = moment.utc(checkInTime)
+      activity.time = moment.utc(checkInTime)
 
-    let parts = checkInText.split(' is drinking an ')
+      let parts = checkInText.split(' is drinking an ')
 
-    if (parts.length === 1) {
-      parts = checkInText.split(' is drinking a ')
-    }
+      if (parts.length === 1) {
+        parts = checkInText.split(' is drinking a ')
+      }
 
-    if (parts.length === 1) {
-      throw new Error('Could not parse check-in drink.')
-    }
+      if (parts.length === 1) {
+        throw new Error('Could not parse check-in drink.')
+      }
 
-    parts = parts[1].split(' by ')
-    activity.beer = parts[0]
-
-    if (parts.length === 2) {
-      parts = parts[1].split(' at ')
-
-      activity.brewery = parts[0]
+      parts = parts[1].split(' by ')
+      activity.beer = parts[0]
 
       if (parts.length === 2) {
-        activity.location = parts[1]
-      }
-    }
+        parts = parts[1].split(' at ')
 
-    recentActivity.push(activity)
-  })
+        activity.brewery = parts[0]
+
+        if (parts.length === 2) {
+          activity.location = parts[1]
+        }
+      }
+
+      recentActivity.push(activity)
+    })
+  } catch (err) {
+    throw new Error(err)
+  }
 
   return recentActivity
 }
@@ -125,6 +132,10 @@ const parseFriends = $ => {
     const nameElement = $(userElement).find('h1', 'a')
     const usernameElement = $(userElement).find('.username')
     const locationElement = $(userElement).find('.location')
+
+    if (!nameElement || !usernameElement || !locationElement) {
+      throw new Error('Could not parse friend details data.')
+    }
 
     friends.push({
       name: $(nameElement).text(),
@@ -144,7 +155,7 @@ const parseVenues = $ => {
   const venues = []
   const venueElements = $('.venue-item')
 
-  venueElements.each((i, venueElement) => {
+  venueElements.each(async (i, venueElement) => {
     const venueDetailsElement = $(venueElement).find('.venue-details')
 
     if (!venueDetailsElement) {
@@ -154,25 +165,90 @@ const parseVenues = $ => {
     const nameElement = $(venueDetailsElement).find('.name a')
     const addressElement = $(venueDetailsElement).find('.address')
     const checkInsElement = $(venueElement).find('.details .check-ins')
+    const dateElements = $(venueElement).find('.date')
+
+    if (!nameElement || !addressElement || !checkInsElement || !dateElements || dateElements.length === 0) {
+      throw new Error('Could not parse venue details data.')
+    }
+
+    const address = addressElement.text().trim()
+    const firstDateText = $(dateElements[0]).text()
+    let firstVisitDate
+    let lastVisitDate
+
+    if (dateElements.length === 2) {
+      firstVisitDate = firstDateText
+      lastVisitDate = $(dateElements[1]).text()
+    } else {
+      lastVisitDate = firstDateText
+    }
 
     venues.push({
       name: nameElement.text().trim(),
-      address: addressElement.text().trim(),
-      checkIns: parseInt(checkInsElement.text().split('Check-ins: ')[1], 10)
+      address,
+      checkIns: parseNumber(checkInsElement.text().split('Check-ins: ')[1]),
+      firstVisitDate,
+      lastVisitDate
     })
   })
 
   return venues
 }
 
-export const getUntappdOsint = async (username, recentActivityOnly) => {
-  const data = {username}
+const geocodeAddress = async (geocoder, venue) => new Promise((resolve, reject) => {
+  geocoder.geocode({
+    address: venue.address
+  }, function (results, status) {
+    if (status !== 'OK') {
+      reject(new Error(status))
+    } else {
+      venue.geocode = results
+      resolve()
+    }
+  })
+})
+
+const geocodeAddresses = async (googleMapsClient, venues) => {
+  if (!googleMapsClient) {
+    reject(new Error('Must set the Google Maps API key prior to using this functionality.'))
+    return
+  }
+
+  const geocoder = new googleMapsClient.maps.Geocoder()
+
+  /*
+  Google Maps allows 10 queries per second:
+  https://developers.google.com/maps/premium/previous-licenses/articles/usage-limits#throttle
+  */
+  const batchSize = 10
+
+  while (venues.length > 0) {
+    const batch = venues.splice(0, batchSize)
+    const promises = []
+
+    for (let venue of batch) {
+      promises.push(geocodeAddress(geocoder, venue))
+    }
+
+    await Promise.all(promises)
+
+    if (venues.length > 0) {
+      await new Promise(resolve => {
+        // The query limit appears to take much longer to reset than 1 second. Wait 10.
+        setTimeout(resolve, 10000)
+      })
+    }
+  }
+}
+
+export const getUntappdOsint = async (username, recentActivityOnly, googleMapsClient) => {
+  const data = { username }
 
   const userDom = await getUserDom(username)
   data.stats = parseStats(userDom)
+  data.recentActivity = parseRecentActivity(userDom)
 
   if (recentActivityOnly) {
-    data.recentActivity = parseRecentActivity(userDom)
     return data
   }
 
@@ -185,6 +261,10 @@ export const getUntappdOsint = async (username, recentActivityOnly) => {
   data.friends = parseFriends(friendsDom)
   data.beers = parseBeers(beersDom)
   data.venues = parseVenues(venuesDom)
+
+  if (googleMapsClient) {
+    await geocodeAddresses(googleMapsClient, data.venues)
+  }
 
   return data
 }
