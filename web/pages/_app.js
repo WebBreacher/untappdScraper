@@ -7,7 +7,7 @@ const UntappdScraperWeb = ({ Component, pageProps }) => {
 }
 
 UntappdScraperWeb.propTypes = {
-  Component: React.Component,
+  Component: PropTypes.func.isRequired,
   pageProps: PropTypes.object
 }
 

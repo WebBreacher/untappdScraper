@@ -86,6 +86,7 @@ export default class Index extends Component {
         await loadGoogleMapsClient(googleMapsApiKey)
 
         this.setState({
+          // eslint-disable-next-line no-undef
           googleMapsClient: google,
           loadingGoogleMapsClient: false,
           submitting: false
@@ -200,7 +201,7 @@ export default class Index extends Component {
           </div>
         }
 
-        <div style={{height: (this.state.data && this.state.data.map) ? '400px' : 0}}>
+        <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
           <div id="map"></div>
         </div>
 

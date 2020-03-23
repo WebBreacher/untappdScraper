@@ -220,14 +220,13 @@ const geocodeAddress = async (geocoder, venue) => new Promise((resolve, reject) 
 
 const geocodeAddresses = async (googleMapsClient, venues) => {
   if (!googleMapsClient) {
-    reject(new Error('Must set the Google Maps API key prior to using this functionality.'))
-    return
+    throw new Error('Must set the Google Maps API key prior to using this functionality.')
   }
 
   const geocoder = new googleMapsClient.maps.Geocoder()
   const promises = []
 
-  for (let venue of venues) {
+  for (const venue of venues) {
     promises.push(geocodeAddress(geocoder, venue))
   }
 
@@ -239,7 +238,7 @@ const displayGoogleMap = (googleMapsClient, venues) => {
   const markers = []
   const heatmapData = []
 
-  for (let venue of venues) {
+  for (const venue of venues) {
     if (venue.geocode) {
       const latLng = {
         lat: venue.geocode[0].geometry.location.lat(),
@@ -270,17 +269,18 @@ const displayGoogleMap = (googleMapsClient, venues) => {
   const map = new googleMapsClient.maps.Map(document.getElementById('map'), {
     center,
     zoom: 4
-  });
+  })
 
-  for (let marker of markers) {
+  for (const marker of markers) {
     marker.setMap(map)
   }
 
+  // eslint-disable-next-line no-new
   new googleMapsClient.maps.visualization.HeatmapLayer({
     data: heatmapData,
     map,
     dissipating: false
-  });
+  })
 
   return map
 }
