@@ -6,6 +6,17 @@ import { Loader } from '@googlemaps/loader'
 export const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const baseUrl = 'https://cors-anywhere.herokuapp.com/https://untappd.com'
 
+const timeToMomentWithTimezone = (time) => {
+  const offset = moment(time).format('Z')
+  const timezoneNames = moment.tz.names()
+
+  const timezoneName = timezoneNames.find(timezoneName =>
+    offset === moment.tz(timezoneName).format('Z')
+  )
+
+  return moment.tz(time, timezoneName)
+}
+
 const getUserDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}`)
 
@@ -92,7 +103,7 @@ export const parseRecentActivity = $ => {
         throw new Error('Could not parse check-in time.')
       }
 
-      activity.time = moment.utc(checkInTime)
+      activity.time = timeToMomentWithTimezone(checkInTime)
 
       let parts = checkInText.split(' is drinking an ')
 
@@ -101,6 +112,11 @@ export const parseRecentActivity = $ => {
       }
 
       if (parts.length === 1) {
+        parts = checkInText.split(' is drinking ')
+      }
+
+      if (parts.length === 1) {
+        console.log(checkInText)
         throw new Error('Could not parse check-in drink.')
       }
 
@@ -149,36 +165,8 @@ const parseFriends = $ => {
   return friends
 }
 
-const updateDrinkHistogram = (beerData, drinkTime) => {
-  const dayOfWeek = drinkTime.format('ddd')
-  beerData.dayOfWeek[dayOfWeek]++
-
-  const hourOfDay = parseNumber(drinkTime.format('H'))
-  beerData.hourOfDay[hourOfDay]++
-
-  const dayOfMonth = parseNumber(drinkTime.format('D'))
-  beerData.dayOfMonth[dayOfMonth]++
-}
-
 const parseBeers = $ => {
-  const beerData = {
-    beers: [],
-    dayOfWeek: {},
-    hourOfDay: {},
-    dayOfMonth: {}
-  }
-
-  for (const day of daysOfWeek) {
-    beerData.dayOfWeek[day] = 0
-  }
-
-  for (let i = 0; i < 24; i++) {
-    beerData.hourOfDay[i] = 0
-  }
-
-  for (let i = 1; i <= 31; i++) {
-    beerData.dayOfMonth[i] = 0
-  }
+  const beers = []
 
   const beerElements = $('.beer-item')
 
@@ -200,28 +188,19 @@ const parseBeers = $ => {
       throw new Error('Could not parse beer dates.')
     }
 
-    const firstDrinkTime = moment($(dateElements[0]).text())
-    const lastDrinkTime = moment($(dateElements[1]).text())
-
-    beerData.beers.push({
+    beers.push({
       name: $(nameElement).text(),
       brewery: $(breweryElement).text(),
       style: $(styleElement).text(),
       abv: $(abvElement).text(),
       ibu: $(ibuElement).text(),
-      firstDrinkTime,
-      lastDrinkTime,
+      firstDrinkTime: timeToMomentWithTimezone($(dateElements[0]).text()),
+      lastDrinkTime: timeToMomentWithTimezone($(dateElements[1]).text()),
       checkIns: parseNumber($(checkInsElement).text().split('Total: ')[1])
     })
-
-    updateDrinkHistogram(beerData, firstDrinkTime)
-
-    if (firstDrinkTime.diff(lastDrinkTime) !== 0) {
-      updateDrinkHistogram(beerData, lastDrinkTime)
-    }
   })
 
-  return beerData
+  return beers
 }
 
 const parseVenues = $ => {
@@ -266,6 +245,120 @@ const parseVenues = $ => {
   })
 
   return venues
+}
+
+const updateDrinkHistogram = (beerAnalytics, drinkTime) => {
+  const dayOfWeek = drinkTime.format('ddd')
+  beerAnalytics.dayOfWeek[dayOfWeek]++
+
+  const hourOfDay = parseNumber(drinkTime.format('H'))
+  beerAnalytics.hourOfDay[hourOfDay]++
+
+  const dayOfMonth = parseNumber(drinkTime.format('D'))
+  beerAnalytics.dayOfMonth[dayOfMonth]++
+}
+
+const analyzeBeers = (beers) => {
+  const beerAnalytics = {
+    dayOfWeek: {},
+    hourOfDay: {},
+    dayOfMonth: {},
+    binges: [],
+    heavyUses: []
+  }
+
+  const uniqueDrinkTimes = []
+
+  for (const day of daysOfWeek) {
+    beerAnalytics.dayOfWeek[day] = 0
+  }
+
+  for (let i = 0; i < 24; i++) {
+    beerAnalytics.hourOfDay[i] = 0
+  }
+
+  for (let i = 1; i <= 31; i++) {
+    beerAnalytics.dayOfMonth[i] = 0
+  }
+
+  for (const beer of beers) {
+    uniqueDrinkTimes.push(beer.firstDrinkTime)
+    updateDrinkHistogram(beerAnalytics, beer.firstDrinkTime)
+
+    if (beer.firstDrinkTime.diff(beer.lastDrinkTime) !== 0) {
+      uniqueDrinkTimes.push(beer.lastDrinkTime)
+      updateDrinkHistogram(beerAnalytics, beer.lastDrinkTime)
+    }
+  }
+
+  const uniqueDrinkTimesSorted = uniqueDrinkTimes.sort((drinkTimeA, drinkTimeB) => {
+    const drinkUnixA = drinkTimeA.unix()
+    const drinkUnixB = drinkTimeB.unix()
+
+    if (drinkUnixA < drinkUnixB) {
+      return -1
+    }
+
+    if (drinkUnixA > drinkUnixB) {
+      return 1
+    }
+
+    return 0
+  })
+
+  /*
+  Drinking Levels from https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
+  Binge Drinking = 5+ drinks (men) / 4+ drinks (women) in < 2 hours
+  Heavy Alcohol Use = 5+ instances of binge drinking in the past month
+  */
+
+  let potentialBinge = []
+  const twoHoursSeconds = 60 * 60 * 2
+
+  for (const drinkTime of uniqueDrinkTimesSorted) {
+    if (potentialBinge.length === 0) {
+      potentialBinge = [drinkTime]
+    } else if (drinkTime.diff(potentialBinge[potentialBinge.length - 1]) > twoHoursSeconds) {
+      if (potentialBinge.length >= 4) {
+        beerAnalytics.binges.push(potentialBinge)
+      }
+
+      potentialBinge = [drinkTime]
+    } else {
+      potentialBinge.push(drinkTime)
+    }
+  }
+
+  if (potentialBinge.length >= 4) {
+    beerAnalytics.binges.push(potentialBinge)
+  }
+
+  let potentialHeavyUse = []
+  const oneMonthSeconds = 60 * 60 * 24 * 30
+
+  for (const binge of beerAnalytics.binges) {
+    if (potentialHeavyUse.length === 0) {
+      potentialHeavyUse = [binge]
+    } else {
+      const previousBinge = potentialBinge[potentialBinge.length - 1]
+
+      if (binge[0].diff(previousBinge[previousBinge.length - 1]) > oneMonthSeconds) {
+        if (potentialHeavyUse.length >= 5) {
+          beerAnalytics.heavyUses.push(potentialHeavyUse)
+        }
+
+        potentialHeavyUse = [binge]
+      } else {
+        potentialHeavyUse.push(binge)
+      }
+    }
+  }
+
+  if (potentialHeavyUse.length >= 5) {
+    beerAnalytics.heavyUses.push(potentialHeavyUse)
+  }
+
+  return beerAnalytics
 }
 
 const geocodeAddress = async (geocoder, venue) => new Promise((resolve, reject) => {
@@ -375,9 +468,10 @@ export const getUntappdOsint = async (username, recentActivityOnly, googleMapsCl
   ])
 
   data.friends = parseFriends(friendsDom)
-  data.beerData = parseBeers(beersDom)
-  console.log(data.beerData)
+  data.beers = parseBeers(beersDom)
   data.venues = parseVenues(venuesDom)
+
+  data.beerAnalytics = analyzeBeers(data.beers)
 
   if (googleMapsClient) {
     await geocodeAddresses(googleMapsClient, data.venues)

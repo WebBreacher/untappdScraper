@@ -261,44 +261,44 @@ export default class Index extends Component {
           </div>
         }
 
-        {this.state.data && this.state.data.beerData &&
+        {this.state.data && this.state.data.beers &&
           <div>
-            {this.state.data && this.state.data.beerData.beers &&
-              <div>
-                <p>Beers:</p>
+            <p>Beers:</p>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Total Drinks</th>
-                      <th>Name</th>
-                      <th>Brewery</th>
-                      <th>Style</th>
-                      <th>ABV</th>
-                      <th>IBU</th>
-                      <th>First Drank at Time</th>
-                      <th>Last Drank at Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.data.beerData.beers.map((beer, index) =>
-                      <tr key={index}>
-                        <td>{beer.checkIns}</td>
-                        <td>{beer.name}</td>
-                        <td>{beer.brewery}</td>
-                        <td>{beer.style}</td>
-                        <td>{beer.abv}</td>
-                        <td>{beer.ibu}</td>
-                        <td>{beer.firstDrinkTime.format(timeFormat)}</td>
-                        <td>{beer.lastDrinkTime.format(timeFormat)}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+            <table>
+              <thead>
+                <tr>
+                  <th>Total Drinks</th>
+                  <th>Name</th>
+                  <th>Brewery</th>
+                  <th>Style</th>
+                  <th>ABV</th>
+                  <th>IBU</th>
+                  <th>First Drank at Time</th>
+                  <th>Last Drank at Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.data.beers.map((beer, index) =>
+                  <tr key={index}>
+                    <td>{beer.checkIns}</td>
+                    <td>{beer.name}</td>
+                    <td>{beer.brewery}</td>
+                    <td>{beer.style}</td>
+                    <td>{beer.abv}</td>
+                    <td>{beer.ibu}</td>
+                    <td>{beer.firstDrinkTime.format(timeFormat)}</td>
+                    <td>{beer.lastDrinkTime.format(timeFormat)}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        }
 
-            {this.state.data && this.state.data.beerData.dayOfWeek &&
+        {this.state.data && this.state.data.beerAnalytics &&
+          <div>
+            {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
               <div>
                 <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
 
@@ -311,7 +311,7 @@ export default class Index extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(this.state.data.beerData.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
+                    {Object.entries(this.state.data.beerAnalytics.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
                       <tr key={index}>
                         <td>{entry[0]}</td>
                         <td>{entry[1]}</td>
@@ -323,7 +323,7 @@ export default class Index extends Component {
               </div>
             }
 
-            {this.state.data && this.state.data.beerData.hourOfDay &&
+            {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
               <div>
                 <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
 
@@ -336,7 +336,7 @@ export default class Index extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(this.state.data.beerData.hourOfDay).sort(sortHourEntries).map((entry, index) =>
+                    {Object.entries(this.state.data.beerAnalytics.hourOfDay).sort(sortHourEntries).map((entry, index) =>
                       <tr key={index}>
                         <td>{formatHour(entry[0])}</td>
                         <td>{entry[1]}</td>
@@ -348,7 +348,7 @@ export default class Index extends Component {
               </div>
             }
 
-            {this.state.data && this.state.data.beerData.dayOfMonth &&
+            {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
               <div>
                 <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
 
@@ -361,7 +361,7 @@ export default class Index extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(this.state.data.beerData.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
+                    {Object.entries(this.state.data.beerAnalytics.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
                       <tr key={index}>
                         <td>{entry[0]}</td>
                         <td>{entry[1]}</td>
@@ -371,6 +371,62 @@ export default class Index extends Component {
                   </tbody>
                 </table>
               </div>
+            }
+
+            {this.state.data && this.state.data.beerAnalytics.binges &&
+              <div>
+                <p>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Start Time</th>
+                      <th>End Time</th>
+                      <th>Total Drinks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.data.beerAnalytics.binges.map((binge, index) =>
+                      <tr key={index}>
+                        <td>{binge[0].format(timeFormat)}</td>
+                        <td>{binge[binge.length - 1].format(timeFormat)}</td>
+                        <td>{binge.length}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerAnalytics.heavyUses &&
+              <div>
+                <p>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Start Time</th>
+                      <th>End Time</th>
+                      <th>Total Binges</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.data.beerAnalytics.heavyUses.map((heavyUse, index) =>
+                      <tr key={index}>
+                        <td>{heavyUse[0][0].format(timeFormat)}</td>
+                        <td>{heavyUse[heavyUse.length - 1][heavyUse[heavyUse.length - 1].length - 1].format(timeFormat)}</td>
+                        <td>{heavyUse.length}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && (this.state.data.beerAnalytics.binges || this.state.data.beerAnalytics.heavyUses) &&
+              <p>
+                *<a href="https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking"><em>Drinking Levels Definitions from the NIAAA</em></a>
+              </p>
             }
           </div>
         }
