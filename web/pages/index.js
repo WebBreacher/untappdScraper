@@ -1,5 +1,39 @@
 import React, { Component } from 'react'
-import { getUntappdOsint } from '../lib/utils'
+import { getUntappdOsint, loadGoogleMapsClient } from '../lib/utils'
+
+const timeFormat = 'DD MMM YY HH:mm:ss Z'
+
+const sortNumberEntries = (a, b) => {
+  const aNumber = parseInt(a[0], 10)
+  const bNumber = parseInt(b[0], 10)
+
+  if (aNumber[0] < bNumber[0]) {
+    return -1
+  }
+
+  if (aNumber[0] > bNumber[0]) {
+    return 1
+  }
+
+  return 0
+}
+
+const sortDayEntries = (a, b) => {
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  const aIndex = daysOfWeek.indexOf(a[0])
+  const bIndex = daysOfWeek.indexOf(b[0])
+
+  if (aIndex < bIndex) {
+    return -1
+  }
+
+  if (aIndex > bIndex) {
+    return 1
+  }
+
+  return 0
+}
 
 export default class Index extends Component {
   constructor () {
@@ -8,6 +42,9 @@ export default class Index extends Component {
     this.state = {
       username: '',
       recentActivityOnly: false,
+      googleMapsApiKey: '',
+      googleMapsClient: null,
+      loadingGoogleMapsClient: false,
       data: null,
       error: null,
       submitting: false
@@ -26,6 +63,12 @@ export default class Index extends Component {
     })
   }
 
+  updateGoogleMapsApiKey (e) {
+    this.setState({
+      googleMapsApiKey: e.target.value
+    })
+  }
+
   async getUntappdOsint (e) {
     e.preventDefault()
 
@@ -37,10 +80,11 @@ export default class Index extends Component {
 
     const username = this.state.username.trim()
     const recentActivityOnly = this.state.recentActivityOnly
+    const googleMapsClient = this.state.googleMapsClient
 
     if (username) {
       try {
-        const data = await getUntappdOsint(username, recentActivityOnly)
+        const data = await getUntappdOsint(username, recentActivityOnly, googleMapsClient)
 
         this.setState({
           data,
@@ -55,8 +99,43 @@ export default class Index extends Component {
       }
     } else {
       this.setState({
-        error: 'Must provide a username!',
+        error: 'Must provide a username.',
         submitting: false
+      })
+    }
+  }
+
+  async setupGoogleMapsClient (e) {
+    e.preventDefault()
+
+    this.setState({
+      loadingGoogleMapsClient: true,
+      submitting: true
+    })
+
+    const googleMapsApiKey = (this.state.googleMapsApiKey) ? this.state.googleMapsApiKey.trim() : undefined
+
+    if (googleMapsApiKey) {
+      try {
+        await loadGoogleMapsClient(googleMapsApiKey)
+
+        this.setState({
+          // eslint-disable-next-line no-undef
+          googleMapsClient: google,
+          loadingGoogleMapsClient: false,
+          submitting: false
+        })
+      } catch (err) {
+        this.setState({
+          error: err.toString(),
+          loadingGoogleMapsClient: false,
+          submitting: false
+        })
+      }
+    } else {
+      this.setState({
+        error: 'Must provide a Google Maps API key.',
+        loadingGoogleMapsClient: false
       })
     }
   }
@@ -111,7 +190,7 @@ export default class Index extends Component {
               <tbody>
                 {this.state.data.recentActivity.map((activity, index) =>
                   <tr key={index}>
-                    <td>{activity.time.format('DD MMM YY HH:mm:ss')}</td>
+                    <td>{activity.time.format(timeFormat)}</td>
                     <td>{activity.beer}</td>
                     <td>{activity.brewery}</td>
                     <td>{activity.location}</td>
@@ -122,18 +201,173 @@ export default class Index extends Component {
           </div>
         }
 
-        {this.state.data &&
-          <div><br />{JSON.stringify(this.state.data)}</div>
+        {this.state.data && this.state.data.venues &&
+          <div>
+            <p>Venues:</p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Check-ins</th>
+                  <th>Address</th>
+                  <th>First Visit Date</th>
+                  <th>Last Visit Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.data.venues.map((venue, index) =>
+                  <tr key={index}>
+                    <td>{venue.name}</td>
+                    <td>{venue.checkIns}</td>
+                    <td>
+                      {venue.address}
+                      {venue.geocode &&
+                        <div>({venue.geocode[0].geometry.location.lat()}, {venue.geocode[0].geometry.location.lng()})</div>
+                      }
+                    </td>
+                    <td>{venue.firstVisitDate}</td>
+                    <td>{venue.lastVisitDate}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         }
 
-        <div className="entryForm">
-          <form onSubmit={e => { this.getUntappdOsint(e) }}>
-          <input className="username-input" placeholder="Search for a user" type="text" value={this.state.username} onChange={e => { this.updateUsername  (e) }} />
-          <label>Recent activity only</label>
-          <input type="checkbox" value={this.state.recentActivityOnly} onChange=   {e => { this.updateRecentActivityOnly(e) }} />
-          <input className="submit-button" type="submit" value="Search" disabled={this.state.submitting} />
-          </form>
+        {this.state.data && this.state.data.beerData &&
+          <div>
+            {this.state.data && this.state.data.beerData.beers &&
+              <div>
+                <p>Beers:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Brewery</th>
+                      <th>Style</th>
+                      <th>ABV</th>
+                      <th>IBU</th>
+                      <th>First Drank at Time</th>
+                      <th>Last Drank at Time</th>
+                      <th>Total Drinks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.data.beerData.beers.map((beer, index) =>
+                      <tr key={index}>
+                        <td>{beer.name}</td>
+                        <td>{beer.brewery}</td>
+                        <td>{beer.style}</td>
+                        <td>{beer.abv}</td>
+                        <td>{beer.ibu}</td>
+                        <td>{beer.firstDrinkTime.format(timeFormat)}</td>
+                        <td>{beer.lastDrinkTime.format(timeFormat)}</td>
+                        <td>{beer.checkIns}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerData.dayOfWeek &&
+              <div>
+                <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Day of Week</th>
+                      <th>Number of Drinks</th>
+                      <th>Tally</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(this.state.data.beerData.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
+                      <tr key={index}>
+                        <td>{entry[0]}</td>
+                        <td>{entry[1]}</td>
+                        <td>{'x'.repeat(entry[1])}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerData.hourOfDay &&
+              <div>
+                <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Hour of Day</th>
+                      <th>Number of Drinks</th>
+                      <th>Tally</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(this.state.data.beerData.hourOfDay).sort(sortNumberEntries).map((entry, index) =>
+                      <tr key={index}>
+                        <td>{entry[0]}</td>
+                        <td>{entry[1]}</td>
+                        <td>{'x'.repeat(entry[1])}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            {this.state.data && this.state.data.beerData.dayOfMonth &&
+              <div>
+                <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Day of Month</th>
+                      <th>Number of Drinks</th>
+                      <th>Tally</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(this.state.data.beerData.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
+                      <tr key={index}>
+                        <td>{entry[0]}</td>
+                        <td>{entry[1]}</td>
+                        <td>{'x'.repeat(entry[1])}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        }
+
+        <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
+          <div id="map"></div>
         </div>
+
+        <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
+          <p>Username: <input type="text" value={this.state.username} onChange={e => { this.updateUsername(e) }} /></p>
+          <p>Recent Activity Only: <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} /></p>
+          <input type="submit" value="Get Untappd OSINT" disabled={this.state.submitting} />
+        </form>
+
+        <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
+          <p>Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.</p>
+
+          <p>Google Maps API Key: <input type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} /></p>
+
+          <input type="submit" value="Set Google Maps API Key" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
+
+          <p><em>Note: This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.</em></p>
+        </form>
       </div>
     )
   }

@@ -74,5 +74,9 @@ opacity: 0;
 }
 table {
   width: 100%;
-  border: 4px solid black;
+  border: 1px solid black;
+}
+
+#map {
+  height: 100%;
 }
