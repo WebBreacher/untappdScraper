@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getUntappdOsint, loadGoogleMapsClient } from '../lib/utils'
+import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
 
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
@@ -7,11 +7,39 @@ const sortNumberEntries = (a, b) => {
   const aNumber = parseInt(a[0], 10)
   const bNumber = parseInt(b[0], 10)
 
-  if (aNumber[0] < bNumber[0]) {
+  if (aNumber < bNumber) {
     return -1
   }
 
-  if (aNumber[0] > bNumber[0]) {
+  if (aNumber > bNumber) {
+    return 1
+  }
+
+  return 0
+}
+
+const getHourPriority = (numString) => {
+  const num = parseInt(numString, 10)
+
+  let priority = num - 7
+
+  if (priority < 0) {
+    priority = 24 + priority
+  }
+
+  return priority
+}
+
+const sortHourEntries = (a, b) => {
+  // Sort from 07:00 to 06:00.
+  const aPriority = getHourPriority(a[0])
+  const bPriority = getHourPriority(b[0])
+
+  if (aPriority < bPriority) {
+    return -1
+  }
+
+  if (aPriority > bPriority) {
     return 1
   }
 
@@ -19,8 +47,6 @@ const sortNumberEntries = (a, b) => {
 }
 
 const sortDayEntries = (a, b) => {
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
   const aIndex = daysOfWeek.indexOf(a[0])
   const bIndex = daysOfWeek.indexOf(b[0])
 
@@ -208,8 +234,8 @@ export default class Index extends Component {
             <table>
               <thead>
                 <tr>
-                  <th>Name</th>
                   <th>Check-ins</th>
+                  <th>Name</th>
                   <th>Address</th>
                   <th>First Visit Date</th>
                   <th>Last Visit Date</th>
@@ -218,8 +244,8 @@ export default class Index extends Component {
               <tbody>
                 {this.state.data.venues.map((venue, index) =>
                   <tr key={index}>
-                    <td>{venue.name}</td>
                     <td>{venue.checkIns}</td>
+                    <td>{venue.name}</td>
                     <td>
                       {venue.address}
                       {venue.geocode &&
@@ -244,6 +270,7 @@ export default class Index extends Component {
                 <table>
                   <thead>
                     <tr>
+                      <th>Total Drinks</th>
                       <th>Name</th>
                       <th>Brewery</th>
                       <th>Style</th>
@@ -251,12 +278,12 @@ export default class Index extends Component {
                       <th>IBU</th>
                       <th>First Drank at Time</th>
                       <th>Last Drank at Time</th>
-                      <th>Total Drinks</th>
                     </tr>
                   </thead>
                   <tbody>
                     {this.state.data.beerData.beers.map((beer, index) =>
                       <tr key={index}>
+                        <td>{beer.checkIns}</td>
                         <td>{beer.name}</td>
                         <td>{beer.brewery}</td>
                         <td>{beer.style}</td>
@@ -264,7 +291,6 @@ export default class Index extends Component {
                         <td>{beer.ibu}</td>
                         <td>{beer.firstDrinkTime.format(timeFormat)}</td>
                         <td>{beer.lastDrinkTime.format(timeFormat)}</td>
-                        <td>{beer.checkIns}</td>
                       </tr>
                     )}
                   </tbody>
@@ -310,9 +336,9 @@ export default class Index extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(this.state.data.beerData.hourOfDay).sort(sortNumberEntries).map((entry, index) =>
+                    {Object.entries(this.state.data.beerData.hourOfDay).sort(sortHourEntries).map((entry, index) =>
                       <tr key={index}>
-                        <td>{entry[0]}</td>
+                        <td>{formatHour(entry[0])}</td>
                         <td>{entry[1]}</td>
                         <td>{'x'.repeat(entry[1])}</td>
                       </tr>

@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio'
 import * as moment from 'moment-timezone'
 import { Loader } from '@googlemaps/loader'
 
+export const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const baseUrl = 'https://cors-anywhere.herokuapp.com/https://untappd.com'
 
 const getUserDom = async username => {
@@ -150,30 +151,12 @@ const parseFriends = $ => {
 
 const updateDrinkHistogram = (beerData, drinkTime) => {
   const dayOfWeek = drinkTime.format('ddd')
-
-  // eslint-disable-next-line no-prototype-builtins
-  if (!beerData.dayOfWeek.hasOwnProperty(dayOfWeek)) {
-    beerData.dayOfWeek[dayOfWeek] = 0
-  }
-
   beerData.dayOfWeek[dayOfWeek]++
 
   const hourOfDay = parseNumber(drinkTime.format('H'))
-
-  // eslint-disable-next-line no-prototype-builtins
-  if (!beerData.hourOfDay.hasOwnProperty(hourOfDay)) {
-    beerData.hourOfDay[hourOfDay] = 0
-  }
-
   beerData.hourOfDay[hourOfDay]++
 
   const dayOfMonth = parseNumber(drinkTime.format('D'))
-
-  // eslint-disable-next-line no-prototype-builtins
-  if (!beerData.dayOfMonth.hasOwnProperty(dayOfMonth)) {
-    beerData.dayOfMonth[dayOfMonth] = 0
-  }
-
   beerData.dayOfMonth[dayOfMonth]++
 }
 
@@ -183,6 +166,18 @@ const parseBeers = $ => {
     dayOfWeek: {},
     hourOfDay: {},
     dayOfMonth: {}
+  }
+
+  for (const day of daysOfWeek) {
+    beerData.dayOfWeek[day] = 0
+  }
+
+  for (let i = 0; i < 24; i++) {
+    beerData.hourOfDay[i] = 0
+  }
+
+  for (let i = 1; i <= 31; i++) {
+    beerData.dayOfMonth[i] = 0
   }
 
   const beerElements = $('.beer-item')
@@ -400,4 +395,8 @@ export const loadGoogleMapsClient = async (googleMapsApiKey) => {
   })
 
   await loader.load()
+}
+
+export const formatHour = (hour) => {
+  return moment(hour, 'H').format('h A')
 }
