@@ -1,6 +1,10 @@
 @import './reset.css';
 @import './colors.css';
-
+body {
+  font-family: proxima-nova, sans-serif;
+  font-style: normal;
+  font-weight: 100;
+}
 /* 
 COLORS:
     --yellow-color: #fcc000;
@@ -17,53 +21,54 @@ COLORS:
   top: 300px;
 }
 /* TOP SEARCH COMPONENT */
-.container .entryForm form {
+.navbar-menu {
+  /* border: 5px solid yellow; */
   position: fixed;
   top: 0;
+  margin-top: 0;
   width: 100%;
   min-height: 50px;
   background-color: var(--white-color);
   border-bottom: 2px solid var(--light-grey);
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   padding: 1rem;
   font-size: 12px;
 }
 
 /* Search for username input bar */
-.username-input {
-width: 83.5%;
-height: 45px;
+.text-input {
+width: auto;
+height: 20px;
 margin-right: 5px;
 padding: 0 20px;
 font-size: 1rem;
 border: 1px solid var(--light-grey);
 outline: none;
 }
-.username-input:focus{
+.text-input:focus{
 border: 1px solid var(--seaBlue-color);
 transition: 0.35s ease;
 color: var(--darkBlue-color);
 }
   
-.username-input:-webkit-input-placeholder{
+.text-input:-webkit-input-placeholder{
 transition: opacity 0.45s ease; 
 opacity: 0;
 }
 
-.username-input:-moz-placeholder {
+.text-input:-moz-placeholder {
 transition: opacity 0.45s ease; 
 opacity: 0;
 }
-.username-input:-ms-placeholder {
+.text-input:-ms-placeholder {
 transition: opacity 0.45s ease; 
 opacity: 0;
 }
 
 /* Search submit button */
-.submit-button{
+.button{
   margin-left: auto;
   background-color: var(--yellow-color);
   width: 75px;
