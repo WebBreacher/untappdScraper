@@ -940,6 +940,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
+"@googlemaps/loader@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@googlemaps/loader/-/loader-0.0.7.tgz#8655e68ffa03ef8b8353ec539e93377d7adedca2"
+  integrity sha512-b0vMcfjZZvLPVuRmbrPRWL77rK+JOcAHrF2IWwZvW7WPGvA3FmflGspFNwNfizKldSOa5Y2IygEh9oC1PIM0AQ==
+
 "@next/polyfill-nomodule@9.3.1":
   version "9.3.1"
   resolved "https://registry.yarnpkg.com/@next/polyfill-nomodule/-/polyfill-nomodule-9.3.1.tgz#d5e12855cbb3d9a9b668fdc133d843a025dbdb6c"
@@ -4344,7 +4349,14 @@ mkdirp@^0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-moment@2.24.0:
+moment-timezone@0.5.28:
+  version "0.5.28"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.28.tgz#f093d789d091ed7b055d82aa81a82467f72e4338"
+  integrity sha512-TDJkZvAyKIVWg5EtVqRzU97w0Rb0YVbfpqyjgu6GwXCAohVRqwZjf4fOzDE6p1Ch98Sro/8hQQi65WDXW5STPw==
+  dependencies:
+    moment ">= 2.9.0"
+
+"moment@>= 2.9.0":
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
