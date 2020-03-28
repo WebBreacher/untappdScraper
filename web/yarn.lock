@@ -1150,6 +1150,18 @@ adjust-sourcemap-loader@2.0.0:
     object-path "0.11.4"
     regex-parser "2.2.10"
 
+ag-grid-community@^23.0.2:
+  version "23.0.2"
+  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-23.0.2.tgz#81fc92ce9e47c75e854337a1e2d8ef950c3a1d51"
+  integrity sha512-UaD4lEVKKVCA2rrgMJJV328sCp5rdR9hgOh6oMUpZRXCke/3m/r2odjGjzvfT7yeLClj6ZdZuCkM4NmEuCZ8KA==
+
+ag-grid-react@^23.0.2:
+  version "23.0.2"
+  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-23.0.2.tgz#5b584c1d7dffd13e7aa97228e21bf2b1558e75a1"
+  integrity sha512-cE5Z5gPL9AKZfOfKhtmA5RlUU1v+an+OtJneemWdWTADQdYyrvy7CK4PMwAN4/gfye2efE94d2jo1HYRp1i2yw==
+  dependencies:
+    prop-types "^15.6.2"
+
 ajv-errors@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ajv-errors/-/ajv-errors-1.0.1.tgz#f35986aceb91afadec4102fbd85014950cefa64d"

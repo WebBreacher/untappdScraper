@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
-
+import {Table} from './../components/Table'
+import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
 const sortNumberEntries = (a, b) => {
@@ -191,6 +192,10 @@ export default class Index extends Component {
             </form>
           </div>
         </menu>
+        <Table title="Recent Activity" data={mockData.recentActivity}/>
+        <Table title="Friends" data={mockData.friends}/>
+        <Table title="Beers" data={mockData.beers}/>
+        <Table title="Venues" data={mockData.venues}/>
         {this.state.error &&
           <strong>{this.state.error}</strong>
         }

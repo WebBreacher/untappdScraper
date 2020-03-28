@@ -17,8 +17,17 @@ COLORS:
 */
 /* after a search is complete display content 300px below the search bar for now, eventually change the search bar into a collapseable menu */
 .container {
-  position: relative;
-  top: 300px;
+  margin-top: 13vh;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+}
+
+.Table {
+  /* border: solid 5px red; */
+  padding: 1rem;
 }
 /* TOP SEARCH COMPONENT */
 .navbar-menu {
@@ -35,6 +44,7 @@ COLORS:
   justify-content: flex-start;
   padding: 1rem;
   font-size: 12px;
+  z-index: 3;
 }
 
 /* Search for username input bar */
@@ -76,10 +86,6 @@ opacity: 0;
   text-transform: uppercase;
   font-weight: 600;
   color: var(--white-color);
-}
-table {
-  width: 100%;
-  border: 1px solid black;
 }
 
 #map {

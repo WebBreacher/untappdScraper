@@ -17,6 +17,8 @@
   "repository": "github:WebBreacher/untappdScraper",
   "dependencies": {
     "@googlemaps/loader": "0.0.7",
+    "ag-grid-community": "^23.0.2",
+    "ag-grid-react": "^23.0.2",
     "axios": "0.19.2",
     "cheerio": "1.0.0-rc.3",
     "moment-timezone": "0.5.28",
