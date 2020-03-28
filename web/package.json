@@ -16,6 +16,9 @@
   "license": "LicenseRef-LICENSE",
   "repository": "github:WebBreacher/untappdScraper",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
     "@googlemaps/loader": "0.0.7",
     "ag-grid-community": "^23.0.2",
     "ag-grid-react": "^23.0.2",
@@ -23,8 +26,10 @@
     "cheerio": "1.0.0-rc.3",
     "moment-timezone": "0.5.28",
     "next": "9.3.1",
+    "next-images": "^1.4.0",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-tooltip": "^4.1.2"
   },
   "devDependencies": {
     "eslint": "6.8.0",

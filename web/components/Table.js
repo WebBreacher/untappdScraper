@@ -11,9 +11,8 @@ export const Table = (props) => {
         <div
         className="ag-theme-balham"
         style={{
-        height: '800px',
-        width: 'auto',
-        overflow: 'auto'}}
+            height: '750px',
+            width: 'auto'}}
       >
         <AgGridReact
           columnDefs={columns}
