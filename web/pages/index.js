@@ -198,7 +198,8 @@ export default class Index extends Component {
             </form>
           </div>
         </menu>
-        <Table title="Recent Activity" height={'500px'} data={mockData.recentActivity}/>
+        <Table title={`User Stats for ${mockData.username}`} data={[{...mockData.stats}]}/>
+        <Table title="Recent Activity" data={mockData.recentActivity}/>
         <Table title="Friends" data={mockData.friends}/>
         <Table title="Beers" data={mockData.beers}/>
         <Table title="Venues" data={mockData.venues}/>

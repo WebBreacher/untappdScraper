@@ -20,7 +20,7 @@ COLORS:
   margin-top: 13vh;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  grid-template-rows: repeat(5, 1fr);
+  /* grid-template-rows: repeat(5, 1fr); */
   grid-column-gap: 5px;
   grid-row-gap: 5px;
 }
