@@ -3,8 +3,8 @@ import { AgGridReact } from 'ag-grid-react'
 
 export const Table = (props) => {
     const minHeight = 26
-    const columns = Object.keys(props.data[0]).map(key => ({headerName: key, field: key, rowHeight: '30px'})) 
-    const rowLength = props.data.length
+    const columns = Object.keys(props.data[0]).map(key => ({headerName: key, field: key})) 
+
     return (
     <div className="Table">
         <header>
@@ -17,7 +17,7 @@ export const Table = (props) => {
             width: '100%'}}
       >
         <AgGridReact
-        domLayout='autoHeight'
+          domLayout='autoHeight'
           columnDefs={columns}
           rowData={props.data}
           defaultColDef={
@@ -27,7 +27,8 @@ export const Table = (props) => {
                     resizable: true,
                     filter: true,
                     flex: 1,
-                    minWidth: 100
+                    minWidth: 100,
+                    autoHeight: true
                 }
         }>
               

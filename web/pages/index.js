@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 import logoImg from './../assets/logos/logo.png'
+import TopMenu from './../components/TopMenu'
 import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
@@ -174,30 +175,14 @@ export default class Index extends Component {
   render () {
     return (
       <div className="container">
-        <menu className="navbar-menu">
-          <img id="logoImg" src={logoImg}/>
-          <div id="userForm">
-            <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
-              <input className="text-input" placeholder="Username" type="text" value={this.state.username} onChange={e => { this.updateUsername(e) }} />
-              <label>Recent Activity <strong>only</strong></label>
-              <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} />
-              <input className="button" type="submit" value="Scrape" disabled={this.state.submitting} />
-            </form>
-          </div>
-          <div id="mapsAPIForm">
-            <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
-              {/* <p>Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.</p> */}
-
-               <input className="text-input" placeholder="Google Maps API Key" type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} />
-               <FontAwesomeIcon data-for="google-maps-tip" data-tip="This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key." icon={faQuestionCircle}/>
-               <ReactTooltip id="google-maps-tip" place="bottom" type="info"/>
-
-              <input className="button" type="submit" value="Set" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
-
-              
-            </form>
-          </div>
-        </menu>
+        <TopMenu 
+        state={this.state} 
+        getUntappdOsint={this.getUntappdOsint} 
+        updateUsername={this.updateUsername} 
+        updateGoogleMapsApiKey={this.updateGoogleMapsApiKey} 
+        updateRecentActivityOnly={this.updateRecentActivityOnly} 
+        setupGoogleMapsClient={this.setupGoogleMapsClient} 
+        />
         <Table title={`User Stats for ${mockData.username}`} data={[{...mockData.stats}]}/>
         <Table title="Recent Activity" data={mockData.recentActivity}/>
         <Table title="Friends" data={mockData.friends}/>

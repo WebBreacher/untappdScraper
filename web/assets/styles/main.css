@@ -17,7 +17,7 @@ COLORS:
 */
 /* after a search is complete display content 300px below the search bar for now, eventually change the search bar into a collapseable menu */
 .container {
-  margin-top: 13vh;
+  margin-top: 60px;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   /* grid-template-rows: repeat(5, 1fr); */
@@ -40,7 +40,7 @@ COLORS:
   border-bottom: 2px solid var(--light-grey);
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-evenly;
   padding: 1rem;
   font-size: 12px;
   z-index: 3;

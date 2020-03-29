@@ -20,6 +20,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.1.9",
     "@googlemaps/loader": "0.0.7",
+    "@zeit/next-css": "^1.0.1",
     "ag-grid-community": "^23.0.2",
     "ag-grid-react": "^23.0.2",
     "axios": "0.19.2",
