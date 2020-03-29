@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
-import {Table} from './../components/Table'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tippy'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 import logoImg from './../assets/logos/logo.png'
-import TopMenu from './../components/TopMenu'
+import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
+import {Table} from './../components/Table'
 import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
@@ -173,53 +172,48 @@ export default class Index extends Component {
   }
 
   render () {
+    const googleAPITooltip = 'Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations   it finds. This key is     never sent to any server other than the Google Maps API.<br/><br/>This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.'
     return (
       <div className="container">
-        <TopMenu 
-        state={this.state} 
-        getUntappdOsint={this.getUntappdOsint} 
-        updateUsername={this.updateUsername} 
-        updateGoogleMapsApiKey={this.updateGoogleMapsApiKey} 
-        updateRecentActivityOnly={this.updateRecentActivityOnly} 
-        setupGoogleMapsClient={this.setupGoogleMapsClient} 
-        />
-        <Table title={`User Stats for ${mockData.username}`} data={[{...mockData.stats}]}/>
+        {/* TOP NAV MENU */}
+        <menu className="navbar-menu">
+          <img id="logoImg" src={logoImg}/>
+          <div id="userForm">
+            <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
+              <input className="text-input" placeholder="Username" type="text" value={this.state.username} onChange={e => this.updateUsername(e) } />
+              <label>Recent Activity <strong>only</strong></label>
+              <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} />
+              <input className="button" type="submit" value="Scrape" disabled={this.state.submitting} />
+            </form>
+          </div>
+          <div id="mapsAPIForm">
+            <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
+               <input className="text-input" placeholder="Google Maps API Key" type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} />
+                <Tooltip title={googleAPITooltip} position="bottom" trigger="click">
+                  <FontAwesomeIcon icon={faQuestionCircle}/>
+                </Tooltip>
+              <input className="button" type="submit" value="Set" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
+            </form>
+          </div>
+        </menu>
+        {/* <Table title={`User Stats for ${mockData.username}`} data={[{...mockData.stats}]}/>
         <Table title="Recent Activity" data={mockData.recentActivity}/>
         <Table title="Friends" data={mockData.friends}/>
         <Table title="Beers" data={mockData.beers}/>
-        <Table title="Venues" data={mockData.venues}/>
+        <Table title="Venues" data={mockData.venues}/> */}
         {this.state.error &&
           <strong>{this.state.error}</strong>
         }
 
         {this.state.data && this.state.data.stats &&
-          <div>
-            <p>User Stats for {this.state.data.username}:</p>
-
-            <table>
-              <tbody>
-                <tr>
-                  <td>Total Beers</td>
-                  <td>{this.state.data.stats.totalBeers}</td>
-                </tr>
-                <tr>
-                  <td>Total Unique</td>
-                  <td>{this.state.data.stats.totalUnique}</td>
-                </tr>
-                <tr>
-                  <td>Total Badges</td>
-                  <td>{this.state.data.stats.totalBadges}</td>
-                </tr>
-                <tr>
-                  <td>Total Friends</td>
-                  <td>{this.state.data.stats.totalFriends}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
         }
 
         {this.state.data && this.state.data.recentActivity &&
+          // <Table title="Recent Activity" data={this.state.data.recentActivity.map(item => {
+          //   if(item.time) item.time = item.time.format(timeFormat)
+          //   return item
+          // })}/>
           <div>
             <p>Recent Activity:</p>
 

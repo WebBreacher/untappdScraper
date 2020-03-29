@@ -1,9 +1,12 @@
 import React from 'react'
 import { AgGridReact } from 'ag-grid-react'
-
+import _startCase from 'lodash.startCase'
 export const Table = (props) => {
     const minHeight = 26
-    const columns = Object.keys(props.data[0]).map(key => ({headerName: key, field: key})) 
+    const columns = Object.keys(props.data[0]).map(key => (
+      {headerName: _startCase(key), field: key}
+      )
+    ) 
 
     return (
     <div className="Table">
