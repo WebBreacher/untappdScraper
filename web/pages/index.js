@@ -210,103 +210,31 @@ export default class Index extends Component {
         }
 
         {this.state.data && this.state.data.recentActivity &&
-          // <Table title="Recent Activity" data={this.state.data.recentActivity.map(item => {
-          //   if(item.time) item.time = item.time.format(timeFormat)
-          //   return item
-          // })}/>
-          <div>
-            <p>Recent Activity:</p>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Beer</th>
-                  <th>Brewery</th>
-                  <th>Location</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.data.recentActivity.map((activity, index) =>
-                  <tr key={index}>
-                    <td>{activity.time.format(timeFormat)}</td>
-                    <td>{activity.beer}</td>
-                    <td>{activity.brewery}</td>
-                    <td>{activity.location}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table title="Recent Activity" data={this.state.data.recentActivity} valueFormatter={params => {
+            if(params.column.colId === 'time'){
+              return params.value.format(timeFormat)
+            }
+          }}/>
         }
 
         {this.state.data && this.state.data.venues &&
-          <div>
-            <p>Venues:</p>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Check-ins</th>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>First Visit Date</th>
-                  <th>Last Visit Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.data.venues.map((venue, index) =>
-                  <tr key={index}>
-                    <td>{venue.checkIns}</td>
-                    <td>{venue.name}</td>
-                    <td>
-                      {venue.address}
-                      {venue.geocode &&
-                        <div>({venue.geocode[0].geometry.location.lat()}, {venue.geocode[0].geometry.location.lng()})</div>
-                      }
-                    </td>
-                    <td>{venue.firstVisitDate}</td>
-                    <td>{venue.lastVisitDate}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table title="Venues: " data={this.state.data.venues} valueFormatter={params => {
+            const venue = params.data
+            const columnName = params.column.colId
+            if(columnName === 'address' && venue.geocode){
+              return `${venue.geocode[0].geometry.location.lat()}, ${venue.geocode[0].geometry.location.lng()}`
+            }
+            return params.value
+          }}/>
         }
 
         {this.state.data && this.state.data.beers &&
-          <div>
-            <p>Beers:</p>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Total Drinks</th>
-                  <th>Name</th>
-                  <th>Brewery</th>
-                  <th>Style</th>
-                  <th>ABV</th>
-                  <th>IBU</th>
-                  <th>First Drank at Time</th>
-                  <th>Last Drank at Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.data.beers.map((beer, index) =>
-                  <tr key={index}>
-                    <td>{beer.checkIns}</td>
-                    <td>{beer.name}</td>
-                    <td>{beer.brewery}</td>
-                    <td>{beer.style}</td>
-                    <td>{beer.abv}</td>
-                    <td>{beer.ibu}</td>
-                    <td>{beer.firstDrinkTime.format(timeFormat)}</td>
-                    <td>{beer.lastDrinkTime.format(timeFormat)}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table title="Beers:" data={this.state.data.beers} valueFormatter={params => {
+            const columnName = params.column.colId
+            if(columnName === 'firstDrinkTime') return params.value.format(timeFormat)
+            if(columnName === 'lastDrinkTime') return params.value.format(timeFormat)
+            return params.value
+          }}/>
         }
 
         {this.state.data && this.state.data.beerAnalytics &&

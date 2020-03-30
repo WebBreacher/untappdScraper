@@ -60,6 +60,7 @@ COLORS:
 
 #logoImg {
   position: fixed;
+  z-index: 4;
   top: -64px;
   left: 2px;
   max-width: 100%;
@@ -75,7 +76,7 @@ height: 20px;
 margin-right: 5px;
 padding: 0 20px;
 font-size: 1rem;
-border: 1px solid var(--light-grey);
+border: 1px solid var(--darkBlue-color);
 outline: none;
 }
 .text-input:focus{
@@ -100,15 +101,28 @@ opacity: 0;
 
 /* Search submit button */
 .button{
+  cursor: pointer;
   margin-left: auto;
   background-color: var(--yellow-color);
-  width: 75px;
+  width: auto;
+  padding: 0, 10px;
   border-radius: 8px;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--white-color);
+  font-size: 12px;
+}
+.button:hover{
+  background-color: var(--yellow-color);
 }
 
 #map {
   height: 100%;
+}
+/* enable basic browser text selection in grid cells */
+div.ag-root .ag-cell-focus {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }

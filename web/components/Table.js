@@ -1,17 +1,17 @@
 import React from 'react'
 import { AgGridReact } from 'ag-grid-react'
 import _startCase from 'lodash.startCase'
-export const Table = (props) => {
+export const Table = ({data, title, valueFormatter}) => {
     const minHeight = 26
-    const columns = Object.keys(props.data[0]).map(key => (
-      {headerName: _startCase(key), field: key}
+    const columns = Object.keys(data[0]).map(key => (
+      {headerName: _startCase(key), field: key, valueFormatter}
       )
     ) 
 
     return (
     <div className="Table">
         <header>
-            <h3>{props.title}</h3>
+            <h3>{title}</h3>
         </header>
         <div
         className="ag-theme-balham"
@@ -22,7 +22,7 @@ export const Table = (props) => {
         <AgGridReact
           domLayout='autoHeight'
           columnDefs={columns}
-          rowData={props.data}
+          rowData={data}
           defaultColDef={
                 {
                     rowSelection: 'single',
