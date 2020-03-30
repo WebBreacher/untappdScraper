@@ -15,24 +15,25 @@ COLORS:
     --green-color: #329665;
     --red-color: #E25249;
 */
-/* after a search is complete display content 300px below the search bar for now, eventually change the search bar into a collapseable menu */
-.container {
+.content {
   background-color: var(--light-grey-color);
   margin-top: 60px;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  /* grid-template-rows: repeat(5, 1fr); */
   grid-column-gap: 5px;
   grid-row-gap: 20px;
+  padding: 1rem;
 }
 
 .Table {
   /* border: solid 5px var(--yellow-color); */
+  background-color: var(--yellow-color);
+  color: var(--black-color); 
   box-shadow: 0 2px 14px rgba(0,0,0,.1);
+  border-radius: 5px 0;
 }
 /* TOP SEARCH COMPONENT */
 .navbar-menu {
-  /* border: 5px solid yellow; */
   position: fixed;
   top: 0;
   margin-top: 0;

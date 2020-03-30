@@ -5,7 +5,8 @@ import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 import logoImg from './../assets/logos/logo.png'
 import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
 import Table from './../components/Table'
-import mockData from '../mockData'
+// needed for styling static data on the page
+// import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
 const sortNumberEntries = (a, b) => {
@@ -172,7 +173,7 @@ export default class Index extends Component {
   }
 
   render () {
-    const googleAPITooltip = 'Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations   it finds. This key is     never sent to any server other than the Google Maps API.<br/><br/>This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.'
+    const googleAPITooltip = 'Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.<br/><br/>This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.'
     return (
       <div className="container">
         {/* TOP NAV MENU */}
@@ -196,181 +197,182 @@ export default class Index extends Component {
             </form>
           </div>
         </menu>
-        {this.state.error &&
-          <strong>{this.state.error}</strong>
-        }
+        <main className="content">
+          {this.state.error &&
+            <strong>{this.state.error}</strong>
+          }
 
-        {this.state.data && this.state.data.stats &&
-          <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
-        }
+          {this.state.data && this.state.data.stats &&
+            <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
+          }
 
-        {this.state.data && this.state.data.recentActivity &&
-          <Table title="Recent Activity" data={this.state.data.recentActivity} valueFormatter={params => {
-            if(params.column.colId === 'time'){
-              return params.value.format(timeFormat)
-            }
-          }}/>
-        }
+          {this.state.data && this.state.data.recentActivity &&
+            <Table title="Recent Activity" data={this.state.data.recentActivity} valueFormatter={params => {
+              if(params.column.colId === 'time'){
+                return params.value.format(timeFormat)
+              }
+            }}/>
+          }
 
-        {this.state.data && this.state.data.venues &&
-          <Table title="Venues: " data={this.state.data.venues} valueFormatter={params => {
-            const venue = params.data
-            const columnName = params.column.colId
-            if(columnName === 'address' && venue.geocode){
-              return `${venue.geocode[0].geometry.location.lat()}, ${venue.geocode[0].geometry.location.lng()}`
-            }
-            return params.value
-          }}/>
-        }
+          {this.state.data && this.state.data.venues &&
+            <Table title="Venues: " data={this.state.data.venues} valueFormatter={params => {
+              const venue = params.data
+              const columnName = params.column.colId
+              if(columnName === 'address' && venue.geocode){
+                return `${venue.geocode[0].geometry.location.lat()}, ${venue.geocode[0].geometry.location.lng()}`
+              }
+              return params.value
+            }}/>
+          }
 
-        {this.state.data && this.state.data.beers &&
-          <Table title="Beers:" data={this.state.data.beers} valueFormatter={params => {
-            const columnName = params.column.colId
-            if(columnName === 'firstDrinkTime') return params.value.format(timeFormat)
-            if(columnName === 'lastDrinkTime') return params.value.format(timeFormat)
-            return params.value
-          }}/>
-        }
+          {this.state.data && this.state.data.beers &&
+            <Table title="Beers:" data={this.state.data.beers} valueFormatter={params => {
+              const columnName = params.column.colId
+              if(columnName === 'firstDrinkTime') return params.value.format(timeFormat)
+              if(columnName === 'lastDrinkTime') return params.value.format(timeFormat)
+              return params.value
+            }}/>
+          }
 
-        {this.state.data && this.state.data.beerAnalytics &&
-          <div>
-            {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
-              <div>
-                <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
+          {this.state.data && this.state.data.beerAnalytics &&
+            <div>
+              {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
+                <div>
+                  <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Day of Week</th>
-                      <th>Number of Drinks</th>
-                      <th>Tally</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(this.state.data.beerAnalytics.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
-                      <tr key={index}>
-                        <td>{entry[0]}</td>
-                        <td>{entry[1]}</td>
-                        <td>{'x'.repeat(entry[1])}</td>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Day of Week</th>
+                        <th>Number of Drinks</th>
+                        <th>Tally</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {Object.entries(this.state.data.beerAnalytics.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
+                        <tr key={index}>
+                          <td>{entry[0]}</td>
+                          <td>{entry[1]}</td>
+                          <td>{'x'.repeat(entry[1])}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
-              <div>
-                <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
+              {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
+                <div>
+                  <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Hour of Day</th>
-                      <th>Number of Drinks</th>
-                      <th>Tally</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(this.state.data.beerAnalytics.hourOfDay).sort(sortHourEntries).map((entry, index) =>
-                      <tr key={index}>
-                        <td>{formatHour(entry[0])}</td>
-                        <td>{entry[1]}</td>
-                        <td>{'x'.repeat(entry[1])}</td>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Hour of Day</th>
+                        <th>Number of Drinks</th>
+                        <th>Tally</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {Object.entries(this.state.data.beerAnalytics.hourOfDay).sort(sortHourEntries).map((entry, index) =>
+                        <tr key={index}>
+                          <td>{formatHour(entry[0])}</td>
+                          <td>{entry[1]}</td>
+                          <td>{'x'.repeat(entry[1])}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
-              <div>
-                <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
+              {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
+                <div>
+                  <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Day of Month</th>
-                      <th>Number of Drinks</th>
-                      <th>Tally</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(this.state.data.beerAnalytics.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
-                      <tr key={index}>
-                        <td>{entry[0]}</td>
-                        <td>{entry[1]}</td>
-                        <td>{'x'.repeat(entry[1])}</td>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Day of Month</th>
+                        <th>Number of Drinks</th>
+                        <th>Tally</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {Object.entries(this.state.data.beerAnalytics.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
+                        <tr key={index}>
+                          <td>{entry[0]}</td>
+                          <td>{entry[1]}</td>
+                          <td>{'x'.repeat(entry[1])}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && this.state.data.beerAnalytics.binges &&
-              <div>
-                <p>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</p>
+              {this.state.data && this.state.data.beerAnalytics.binges &&
+                <div>
+                  <p>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</p>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Start Time</th>
-                      <th>End Time</th>
-                      <th>Total Drinks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.data.beerAnalytics.binges.map((binge, index) =>
-                      <tr key={index}>
-                        <td>{binge[0].format(timeFormat)}</td>
-                        <td>{binge[binge.length - 1].format(timeFormat)}</td>
-                        <td>{binge.length}</td>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Total Drinks</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {this.state.data.beerAnalytics.binges.map((binge, index) =>
+                        <tr key={index}>
+                          <td>{binge[0].format(timeFormat)}</td>
+                          <td>{binge[binge.length - 1].format(timeFormat)}</td>
+                          <td>{binge.length}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && this.state.data.beerAnalytics.heavyUses &&
-              <div>
-                <p>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</p>
+              {this.state.data && this.state.data.beerAnalytics.heavyUses &&
+                <div>
+                  <p>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</p>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Start Time</th>
-                      <th>End Time</th>
-                      <th>Total Binges</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.data.beerAnalytics.heavyUses.map((heavyUse, index) =>
-                      <tr key={index}>
-                        <td>{heavyUse[0][0].format(timeFormat)}</td>
-                        <td>{heavyUse[heavyUse.length - 1][heavyUse[heavyUse.length - 1].length - 1].format(timeFormat)}</td>
-                        <td>{heavyUse.length}</td>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Total Binges</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {this.state.data.beerAnalytics.heavyUses.map((heavyUse, index) =>
+                        <tr key={index}>
+                          <td>{heavyUse[0][0].format(timeFormat)}</td>
+                          <td>{heavyUse[heavyUse.length - 1][heavyUse[heavyUse.length - 1].length - 1].format(timeFormat)}</td>
+                          <td>{heavyUse.length}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && (this.state.data.beerAnalytics.binges || this.state.data.beerAnalytics.heavyUses) &&
-              <p>
-                *<a href="https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking"><em>Drinking Levels Definitions from the NIAAA</em></a>
-              </p>
-            }
+              {this.state.data && (this.state.data.beerAnalytics.binges || this.state.data.beerAnalytics.heavyUses) &&
+                <p>
+                  *<a href="https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking"><em>Drinking Levels Definitions from the NIAAA</em></a>
+                </p>
+              }
+            </div>
+          }
+
+          <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
+            <div id="map"></div>
           </div>
-        }
-
-        <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
-          <div id="map"></div>
-        </div>
-        
+        </main>
       </div>
     )
   }
