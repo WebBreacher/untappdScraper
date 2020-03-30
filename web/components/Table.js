@@ -1,7 +1,12 @@
 import React from 'react'
 import { AgGridReact } from 'ag-grid-react'
 import _startCase from 'lodash.startCase'
-export const Table = ({data, title, valueFormatter}) => {
+import PropTypes from 'prop-types'
+/**
+ * Abstraction module of AgGrid Table library, mainly for readonly purposes
+ * @param {data, title, valueFormatter}  
+ */
+const Table = ({data, title, valueFormatter}) => {
     const minHeight = 26
     const columns = Object.keys(data[0]).map(key => (
       {headerName: _startCase(key), field: key, valueFormatter}
@@ -40,3 +45,11 @@ export const Table = ({data, title, valueFormatter}) => {
     </div>
     )
 }
+
+Table.propTypes = {
+  data: PropTypes.object.isRequired, 
+  title: PropTypes.string, 
+  valueFormatter: PropTypes.func
+}
+
+export default Table
