@@ -47,7 +47,7 @@ const Table = ({data, title, valueFormatter}) => {
 }
 
 Table.propTypes = {
-  data: PropTypes.object.isRequired, 
+  data: PropTypes.array.isRequired, 
   title: PropTypes.string, 
   valueFormatter: PropTypes.func
 }

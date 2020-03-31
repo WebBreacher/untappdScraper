@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Tooltip } from 'react-tippy'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
+import {faQuestionCircle, faBeer} from '@fortawesome/free-solid-svg-icons'
 import logoImg from './../assets/logos/logo.png'
 import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
 import Table from './../components/Table'
@@ -79,7 +79,8 @@ export default class Index extends Component {
       loadingGoogleMapsClient: false,
       data: null,
       error: null,
-      submitting: false
+      submitting: false,
+      loading: false
     }
   }
 
@@ -107,7 +108,8 @@ export default class Index extends Component {
     this.setState({
       data: null,
       error: null,
-      submitting: true
+      submitting: true,
+      loading: true
     })
 
     const username = this.state.username.trim()
@@ -121,18 +123,21 @@ export default class Index extends Component {
         this.setState({
           data,
           username: '',
-          submitting: false
+          submitting: false,
+          loading: false
         })
       } catch (err) {
         this.setState({
           error: err.toString(),
-          submitting: false
+          submitting: false,
+          loading: false
         })
       }
     } else {
       this.setState({
         error: 'Must provide a username.',
-        submitting: false
+        submitting: false,
+        loading: false
       })
     }
   }
@@ -178,7 +183,7 @@ export default class Index extends Component {
       <div className="container">
         {/* TOP NAV MENU */}
         <menu className="navbar-menu">
-          <img id="logoImg" src={logoImg}/>
+            <img id="logoImg" src={logoImg}/>
           <div id="userForm">
             <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
               <input className="text-input" placeholder="Username" type="text" value={this.state.username} onChange={e => this.updateUsername(e) } />
@@ -201,7 +206,10 @@ export default class Index extends Component {
           {this.state.error &&
             <strong>{this.state.error}</strong>
           }
-
+          {this.state.loading &&
+            <FontAwesomeIcon className="loadingBeer"icon={faBeer}/>
+            // <span>Loading...</span>
+          }
           {this.state.data && this.state.data.stats &&
             <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
           }

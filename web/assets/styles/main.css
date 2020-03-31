@@ -4,6 +4,7 @@ body {
   font-family: proxima-nova, sans-serif;
   font-style: normal;
   font-weight: 100;
+  min-height: 550px;
 }
 /* 
 COLORS:
@@ -17,7 +18,7 @@ COLORS:
 */
 .content {
   background-color: var(--light-grey-color);
-  margin-top: 60px;
+  margin-top: 80px;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   grid-column-gap: 5px;
@@ -25,12 +26,27 @@ COLORS:
   padding: 1rem;
 }
 
+@keyframes slide-up {
+  0% {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
 .Table {
-  /* border: solid 5px var(--yellow-color); */
   background-color: var(--yellow-color);
   color: var(--black-color); 
   box-shadow: 0 2px 14px rgba(0,0,0,.1);
   border-radius: 5px 0;
+  animation: slide-up 0.8s ease;
+}
+
+.Table header {
+  padding: .5rem;
 }
 /* TOP SEARCH COMPONENT */
 .navbar-menu {
@@ -43,8 +59,8 @@ COLORS:
   box-shadow: 0 2px 14px rgba(0,0,0,.1);
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  padding: 1rem;
+  justify-content: flex-end;
+  padding: 2rem;
   font-size: 12px;
   z-index: 3;
 }
@@ -58,6 +74,27 @@ COLORS:
   width: 38%;
   padding: 16px;
 }
+@keyframes spin {
+  from {
+      transform:rotate(0deg);
+  }
+  to {
+      transform:rotate(360deg);
+  }
+}
+.loadingBeer{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  margin: 0 auto;
+  animation-name: spin;
+  animation-duration: 2000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+}
 
 #logoImg {
   position: fixed;
@@ -65,7 +102,7 @@ COLORS:
   top: -64px;
   left: 2px;
   max-width: 100%;
-  height: 175px;
+  height: 200px;
   vertical-align: bottom;
   background-size: cover;
 }
