@@ -66,6 +66,44 @@ COLORS:
   background-color: var(--light-grey);
   padding: .5rem;
 }
+/* Beer analytcs */
+.bingesTable{
+  background-color: var(--yellow-color);
+  color: var(--black-color); 
+  box-shadow: 0 2px 14px rgba(0,0,0,.1);
+  border-radius: 5px 0;
+  animation: slide-up 0.8s ease;
+  border: solid 1px #bdc3c7; 
+}
+
+.bingesTable header {
+  padding:.5rem;
+}
+.heavyUsesTable{
+  background-color: var(--yellow-color);
+  color: var(--black-color); 
+  box-shadow: 0 2px 14px rgba(0,0,0,.1);
+  border-radius: 5px 0;
+  animation: slide-up 0.8s ease;
+  border: solid 1px #bdc3c7; 
+}
+
+.heavyUsesTable header {
+  padding:.5rem;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  background-color: var(--light-grey)
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.54);
+}
 
 /* TOP SEARCH COMPONENT */
 .navbar-menu {

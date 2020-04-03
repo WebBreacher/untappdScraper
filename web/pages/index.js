@@ -271,8 +271,11 @@ export default class Index extends Component {
               }
 
               {this.state.data && this.state.data.beerAnalytics.binges &&
-                <div>
-                  <p>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</p>
+
+                <div className="bingesTable">
+                  <header>
+                    <h3>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</h3>
+                  </header>
 
                   <table>
                     <thead>
@@ -296,8 +299,10 @@ export default class Index extends Component {
               }
 
               {this.state.data && this.state.data.beerAnalytics.heavyUses &&
-                <div>
-                  <p>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</p>
+                <div className="heavyUsesTable">
+                  <header>
+                    <h3>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</h3>
+                  </header>
 
                   <table>
                     <thead>
