@@ -48,6 +48,25 @@ COLORS:
 .Table header {
   padding: .5rem;
 }
+
+.Chart{
+  background-color: var(--yellow-color);
+  color: var(--black-color); 
+  box-shadow: 0 2px 14px rgba(0,0,0,.1);
+  border-radius: 5px 0;
+  animation: slide-up 0.8s ease;
+  border: solid 1px #bdc3c7;
+}
+
+.Chart header {
+  padding: .5rem;
+}
+
+.Chart main {
+  background-color: var(--light-grey);
+  padding: .5rem;
+}
+
 /* TOP SEARCH COMPONENT */
 .navbar-menu {
   position: fixed;
@@ -158,6 +177,9 @@ opacity: 0;
   /* Scaling button to 0.98 to its original size */
   box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
   /* Lowering the shadow */ 
+}
+.button:disabled{
+  background-color: #cd9d0084;
 } 
 
 #map {

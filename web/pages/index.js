@@ -252,6 +252,10 @@ export default class Index extends Component {
             }}/>
           }
 
+          <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
+            <div id="map"></div>
+          </div>
+
           {this.state.data && this.state.data.beerAnalytics &&
             <div>
               {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
@@ -259,53 +263,11 @@ export default class Index extends Component {
               }
 
               {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
-                <div>
-                  <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
-
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Hour of Day</th>
-                        <th>Number of Drinks</th>
-                        <th>Tally</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(this.state.data.beerAnalytics.hourOfDay).sort(sortHourEntries).map((entry, index) =>
-                        <tr key={index}>
-                          <td>{formatHour(entry[0])}</td>
-                          <td>{entry[1]}</td>
-                          <td>{'x'.repeat(entry[1])}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Hour of Day:" data={makeChartData(mockData.beerAnalytics.hourOfDay)}/>
               }
 
               {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
-                <div>
-                  <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
-
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Day of Month</th>
-                        <th>Number of Drinks</th>
-                        <th>Tally</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(this.state.data.beerAnalytics.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
-                        <tr key={index}>
-                          <td>{entry[0]}</td>
-                          <td>{entry[1]}</td>
-                          <td>{'x'.repeat(entry[1])}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Month:" data={makeChartData(mockData.beerAnalytics.dayOfMonth)}/>
               }
 
               {this.state.data && this.state.data.beerAnalytics.binges &&
@@ -365,10 +327,6 @@ export default class Index extends Component {
               }
             </div>
           }
-
-          <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
-            <div id="map"></div>
-          </div>
         </main>
       </div>
     )
