@@ -83,12 +83,13 @@ COLORS:
   }
 }
 .loadingBeer{
+  width: 100px;
+  height: 100px;
   position: fixed;
   top: 50%;
   left: 50%;
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
-  font-size: 36px;
   margin: 0 auto;
   animation-name: spin;
   animation-duration: 2000ms;
@@ -150,9 +151,14 @@ opacity: 0;
   color: var(--white-color);
   font-size: 12px;
 }
-.button:hover{
-  background-color: var(--yellow-color);
-}
+.button:hover {background-color: #cd9d00}
+
+.button:active { 
+  transform: scale(0.98); 
+  /* Scaling button to 0.98 to its original size */
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+  /* Lowering the shadow */ 
+} 
 
 #map {
   height: 100%;

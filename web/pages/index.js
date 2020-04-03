@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { Tooltip } from 'react-tippy'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faQuestionCircle, faBeer} from '@fortawesome/free-solid-svg-icons'
+import {faQuestionCircle, faWineBottle} from '@fortawesome/free-solid-svg-icons'
+import LoadingIcon from './../assets/logos/single_glass.png'
 import logoImg from './../assets/logos/logo.png'
 import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
 import Table from './../components/Table'
+import Chart from './../components/Chart'
 // needed for styling static data on the page
-// import mockData from '../mockData'
+import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
 const sortNumberEntries = (a, b) => {
@@ -65,6 +67,14 @@ const sortDayEntries = (a, b) => {
   }
 
   return 0
+}
+
+const makeChartData = (initialData) => {
+  const newData = Object.entries(initialData).reduce((acc, cur) => {
+    const [dayWeek, beers] = cur
+    return [...acc, {x: dayWeek, y: beers}]
+  }, [])
+  return newData
 }
 
 export default class Index extends Component {
@@ -207,8 +217,8 @@ export default class Index extends Component {
             <strong>{this.state.error}</strong>
           }
           {this.state.loading &&
-            <FontAwesomeIcon className="loadingBeer"icon={faBeer}/>
-            // <span>Loading...</span>
+            <div><img className="loadingBeer" src={LoadingIcon} alt="loadingIcon"/>
+            <span>Scrapping...</span></div>
           }
           {this.state.data && this.state.data.stats &&
             <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
@@ -245,28 +255,7 @@ export default class Index extends Component {
           {this.state.data && this.state.data.beerAnalytics &&
             <div>
               {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
-                <div>
-                  <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
-
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Day of Week</th>
-                        <th>Number of Drinks</th>
-                        <th>Tally</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(this.state.data.beerAnalytics.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
-                        <tr key={index}>
-                          <td>{entry[0]}</td>
-                          <td>{entry[1]}</td>
-                          <td>{'x'.repeat(entry[1])}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Week:" data={makeChartData(this.state.data.beerAnalytics.dayOfWeek)} yRange={[0,25]}/>
               }
 
               {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
