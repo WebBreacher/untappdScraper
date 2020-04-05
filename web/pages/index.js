@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
+import { Tooltip } from 'react-tippy'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faQuestionCircle, faWineBottle} from '@fortawesome/free-solid-svg-icons'
+import LoadingIcon from './../assets/logos/single_glass.png'
+import logoImg from './../assets/logos/logo-untapped.png'
 import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
-
+import Table from './../components/Table'
+import Chart from './../components/Chart'
+// needed for styling static data on the page
+import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
 const sortNumberEntries = (a, b) => {
@@ -61,6 +69,14 @@ const sortDayEntries = (a, b) => {
   return 0
 }
 
+const makeChartData = (initialData) => {
+  const newData = Object.entries(initialData).reduce((acc, cur) => {
+    const [dayWeek, beers] = cur
+    return [...acc, {x: dayWeek, y: beers}]
+  }, [])
+  return newData
+}
+
 export default class Index extends Component {
   constructor () {
     super()
@@ -73,7 +89,8 @@ export default class Index extends Component {
       loadingGoogleMapsClient: false,
       data: null,
       error: null,
-      submitting: false
+      submitting: false,
+      loading: false
     }
   }
 
@@ -101,7 +118,8 @@ export default class Index extends Component {
     this.setState({
       data: null,
       error: null,
-      submitting: true
+      submitting: true,
+      loading: true
     })
 
     const username = this.state.username.trim()
@@ -115,18 +133,21 @@ export default class Index extends Component {
         this.setState({
           data,
           username: '',
-          submitting: false
+          submitting: false,
+          loading: false
         })
       } catch (err) {
         this.setState({
           error: err.toString(),
-          submitting: false
+          submitting: false,
+          loading: false
         })
       }
     } else {
       this.setState({
         error: 'Must provide a username.',
-        submitting: false
+        submitting: false,
+        loading: false
       })
     }
   }
@@ -167,289 +188,151 @@ export default class Index extends Component {
   }
 
   render () {
+    const googleAPITooltip = 'Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.<br/><br/>This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.'
     return (
-      <div>
-        {this.state.error &&
-          <strong>{this.state.error}</strong>
-        }
-
-        {this.state.data && this.state.data.stats &&
-          <div>
-            <p>User Stats for {this.state.data.username}:</p>
-
-            <table>
-              <tbody>
-                <tr>
-                  <td>Total Beers</td>
-                  <td>{this.state.data.stats.totalBeers}</td>
-                </tr>
-                <tr>
-                  <td>Total Unique</td>
-                  <td>{this.state.data.stats.totalUnique}</td>
-                </tr>
-                <tr>
-                  <td>Total Badges</td>
-                  <td>{this.state.data.stats.totalBadges}</td>
-                </tr>
-                <tr>
-                  <td>Total Friends</td>
-                  <td>{this.state.data.stats.totalFriends}</td>
-                </tr>
-              </tbody>
-            </table>
+      <div className="container">
+        {/* TOP NAV MENU */}
+        <menu className="navbar-menu">
+            <img id="logoImg" src={logoImg}/>
+          <div id="userForm">
+            <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
+              <input className="text-input" placeholder="Username" type="text" value={this.state.username} onChange={e => this.updateUsername(e) } />
+              <label>Recent Activity <strong>only</strong></label>
+              <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} />
+              <input className="button" type="submit" value="Scrape" disabled={this.state.submitting} />
+            </form>
           </div>
-        }
-
-        {this.state.data && this.state.data.recentActivity &&
-          <div>
-            <p>Recent Activity:</p>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Beer</th>
-                  <th>Brewery</th>
-                  <th>Location</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.data.recentActivity.map((activity, index) =>
-                  <tr key={index}>
-                    <td>{activity.time.format(timeFormat)}</td>
-                    <td>{activity.beer}</td>
-                    <td>{activity.brewery}</td>
-                    <td>{activity.location}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <div id="mapsAPIForm">
+            <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
+               <input className="text-input" placeholder="Google Maps API Key" type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} />
+                <Tooltip title={googleAPITooltip} position="bottom" trigger="click">
+                  <FontAwesomeIcon icon={faQuestionCircle}/>
+                </Tooltip>
+              <input className="button" type="submit" value="Set" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
+            </form>
           </div>
-        }
+        </menu>
+        <main className="content">
+          {this.state.error &&
+            <strong>{this.state.error}</strong>
+          }
+          {this.state.loading &&
+            <div><img className="loadingBeer" src={LoadingIcon} alt="loadingIcon"/>
+            <span>Scraping...</span></div>
+          }
+          {this.state.data && this.state.data.stats &&
+            <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
+          }
 
-        {this.state.data && this.state.data.venues &&
-          <div>
-            <p>Venues:</p>
+          {this.state.data && this.state.data.recentActivity &&
+            <Table title="Recent Activity" data={this.state.data.recentActivity} valueFormatter={params => {
+              if(params.column.colId === 'time'){
+                return params.value.format(timeFormat)
+              }
+            }}/>
+          }
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Check-ins</th>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>First Visit Date</th>
-                  <th>Last Visit Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.data.venues.map((venue, index) =>
-                  <tr key={index}>
-                    <td>{venue.checkIns}</td>
-                    <td>{venue.name}</td>
-                    <td>
-                      {venue.address}
-                      {venue.geocode &&
-                        <div>({venue.geocode[0].geometry.location.lat()}, {venue.geocode[0].geometry.location.lng()})</div>
-                      }
-                    </td>
-                    <td>{venue.firstVisitDate}</td>
-                    <td>{venue.lastVisitDate}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          {this.state.data && this.state.data.venues &&
+            <Table title="Venues: " data={this.state.data.venues} valueFormatter={params => {
+              const venue = params.data
+              const columnName = params.column.colId
+              if(columnName === 'address' && venue.geocode){
+                return `${venue.geocode[0].geometry.location.lat()}, ${venue.geocode[0].geometry.location.lng()}`
+              }
+              return params.value
+            }}/>
+          }
+
+          {this.state.data && this.state.data.beers &&
+            <Table title="Beers:" data={this.state.data.beers} valueFormatter={params => {
+              const columnName = params.column.colId
+              if(columnName === 'firstDrinkTime') return params.value.format(timeFormat)
+              if(columnName === 'lastDrinkTime') return params.value.format(timeFormat)
+              return params.value
+            }}/>
+          }
+
+          <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
+            <div id="map"></div>
           </div>
-        }
 
-        {this.state.data && this.state.data.beers &&
-          <div>
-            <p>Beers:</p>
+          {this.state.data && this.state.data.beerAnalytics &&
+            <div>
+              {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
+                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Week:" data={makeChartData(this.state.data.beerAnalytics.dayOfWeek)} yRange={[0,25]}/>
+              }
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Total Drinks</th>
-                  <th>Name</th>
-                  <th>Brewery</th>
-                  <th>Style</th>
-                  <th>ABV</th>
-                  <th>IBU</th>
-                  <th>First Drank at Time</th>
-                  <th>Last Drank at Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.data.beers.map((beer, index) =>
-                  <tr key={index}>
-                    <td>{beer.checkIns}</td>
-                    <td>{beer.name}</td>
-                    <td>{beer.brewery}</td>
-                    <td>{beer.style}</td>
-                    <td>{beer.abv}</td>
-                    <td>{beer.ibu}</td>
-                    <td>{beer.firstDrinkTime.format(timeFormat)}</td>
-                    <td>{beer.lastDrinkTime.format(timeFormat)}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        }
+              {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
+                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Hour of Day:" data={makeChartData(mockData.beerAnalytics.hourOfDay)}/>
+              }
 
-        {this.state.data && this.state.data.beerAnalytics &&
-          <div>
-            {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
-              <div>
-                <p>Drinking Patterns (Last 25 beers) - Day of Week:</p>
+              {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
+                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Month:" data={makeChartData(mockData.beerAnalytics.dayOfMonth)}/>
+              }
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Day of Week</th>
-                      <th>Number of Drinks</th>
-                      <th>Tally</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(this.state.data.beerAnalytics.dayOfWeek).sort(sortDayEntries).map((entry, index) =>
-                      <tr key={index}>
-                        <td>{entry[0]}</td>
-                        <td>{entry[1]}</td>
-                        <td>{'x'.repeat(entry[1])}</td>
+              {this.state.data && this.state.data.beerAnalytics.binges &&
+
+                <div className="bingesTable">
+                  <header>
+                    <h3>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</h3>
+                  </header>
+
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Total Drinks</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {this.state.data.beerAnalytics.binges.map((binge, index) =>
+                        <tr key={index}>
+                          <td>{binge[0].format(timeFormat)}</td>
+                          <td>{binge[binge.length - 1].format(timeFormat)}</td>
+                          <td>{binge.length}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
-              <div>
-                <p>Drinking Patterns (Last 25 beers) - Hour of Day:</p>
+              {this.state.data && this.state.data.beerAnalytics.heavyUses &&
+                <div className="heavyUsesTable">
+                  <header>
+                    <h3>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</h3>
+                  </header>
 
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Hour of Day</th>
-                      <th>Number of Drinks</th>
-                      <th>Tally</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(this.state.data.beerAnalytics.hourOfDay).sort(sortHourEntries).map((entry, index) =>
-                      <tr key={index}>
-                        <td>{formatHour(entry[0])}</td>
-                        <td>{entry[1]}</td>
-                        <td>{'x'.repeat(entry[1])}</td>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Total Binges</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
+                    </thead>
+                    <tbody>
+                      {this.state.data.beerAnalytics.heavyUses.map((heavyUse, index) =>
+                        <tr key={index}>
+                          <td>{heavyUse[0][0].format(timeFormat)}</td>
+                          <td>{heavyUse[heavyUse.length - 1][heavyUse[heavyUse.length - 1].length - 1].format(timeFormat)}</td>
+                          <td>{heavyUse.length}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              }
 
-            {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
-              <div>
-                <p>Drinking Patterns (Last 25 beers) - Day of Month:</p>
-
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Day of Month</th>
-                      <th>Number of Drinks</th>
-                      <th>Tally</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(this.state.data.beerAnalytics.dayOfMonth).sort(sortNumberEntries).map((entry, index) =>
-                      <tr key={index}>
-                        <td>{entry[0]}</td>
-                        <td>{entry[1]}</td>
-                        <td>{'x'.repeat(entry[1])}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
-
-            {this.state.data && this.state.data.beerAnalytics.binges &&
-              <div>
-                <p>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</p>
-
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Start Time</th>
-                      <th>End Time</th>
-                      <th>Total Drinks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.data.beerAnalytics.binges.map((binge, index) =>
-                      <tr key={index}>
-                        <td>{binge[0].format(timeFormat)}</td>
-                        <td>{binge[binge.length - 1].format(timeFormat)}</td>
-                        <td>{binge.length}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
-
-            {this.state.data && this.state.data.beerAnalytics.heavyUses &&
-              <div>
-                <p>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</p>
-
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Start Time</th>
-                      <th>End Time</th>
-                      <th>Total Binges</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.data.beerAnalytics.heavyUses.map((heavyUse, index) =>
-                      <tr key={index}>
-                        <td>{heavyUse[0][0].format(timeFormat)}</td>
-                        <td>{heavyUse[heavyUse.length - 1][heavyUse[heavyUse.length - 1].length - 1].format(timeFormat)}</td>
-                        <td>{heavyUse.length}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            }
-
-            {this.state.data && (this.state.data.beerAnalytics.binges || this.state.data.beerAnalytics.heavyUses) &&
-              <p>
-                *<a href="https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking"><em>Drinking Levels Definitions from the NIAAA</em></a>
-              </p>
-            }
-          </div>
-        }
-
-        <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
-          <div id="map"></div>
-        </div>
-
-        <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
-          <p>Username: <input type="text" value={this.state.username} onChange={e => { this.updateUsername(e) }} /></p>
-          <p>Recent Activity Only: <input type="checkbox" value={this.state.recentActivityOnly} onChange={e => { this.updateRecentActivityOnly(e) }} /></p>
-          <input type="submit" value="Get Untappd OSINT" disabled={this.state.submitting} />
-        </form>
-
-        <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
-          <p>Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.</p>
-
-          <p>Google Maps API Key: <input type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} /></p>
-
-          <input type="submit" value="Set Google Maps API Key" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
-
-          <p><em>Note: This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.</em></p>
-        </form>
+              {this.state.data && (this.state.data.beerAnalytics.binges || this.state.data.beerAnalytics.heavyUses) &&
+                <p>
+                  *<a href="https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking"><em>Drinking Levels Definitions from the NIAAA</em></a>
+                </p>
+              }
+            </div>
+          }
+        </main>
       </div>
     )
   }
