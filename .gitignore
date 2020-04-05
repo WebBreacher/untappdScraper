@@ -1,7 +1,5 @@
-
 *.xml
 *.iml
-*.html
 *.csv
 geocode_api_keys.py
 .vscode
