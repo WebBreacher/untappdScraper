@@ -170,7 +170,7 @@ export default class Index extends Component {
     return (
       <div className="container">
         <menu className="navbar-menu">
-          <img id="logo-img" src={logoImg}/>
+          <img id="logo-img" src={logoImg} alt="logoImg" />
 
           <div id="user-form">
             <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
@@ -186,7 +186,7 @@ export default class Index extends Component {
               <input className="text-input" placeholder="Google Maps API Key" type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} />
 
               <Tooltip title={googleAPITooltip} position="bottom" trigger="click">
-                <FontAwesomeIcon icon={faQuestionCircle}/>
+                <FontAwesomeIcon icon={faQuestionCircle} />
               </Tooltip>
 
               <input className="button" type="submit" value="Set" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
@@ -200,12 +200,12 @@ export default class Index extends Component {
           }
 
           {this.state.loading &&
-            <div><img className="loading-beer" src={LoadingIcon} alt="loadingIcon"/>
+            <div><img className="loading-beer" src={LoadingIcon} alt="loadingIcon" />
               <span>Scraping...</span></div>
           }
 
           {this.state.data && this.state.data.stats &&
-            <Table title={`User Stats for ${this.state.data.username}`} data={[{ ...this.state.data.stats }]}/>
+            <Table title={`User Stats for ${this.state.data.username}`} data={[{ ...this.state.data.stats }]} />
           }
 
           {this.state.data && this.state.data.recentActivity &&
@@ -256,11 +256,11 @@ export default class Index extends Component {
               }
 
               {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
-                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Hour of Day:" data={makeChartData(this.state.data.beerAnalytics.hourOfDay, sortHourEntries, formatHour)}/>
+                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Hour of Day:" data={makeChartData(this.state.data.beerAnalytics.hourOfDay, sortHourEntries, formatHour)} />
               }
 
               {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
-                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Month:" data={makeChartData(this.state.data.beerAnalytics.dayOfMonth)}/>
+                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Month:" data={makeChartData(this.state.data.beerAnalytics.dayOfMonth)} />
               }
 
               {this.state.data && this.state.data.beerAnalytics.binges &&
