@@ -5,7 +5,8 @@ import {
     XAxis,
     XYPlot,
     YAxis,
-    VerticalBarSeries
+    VerticalBarSeries,
+    FlexibleWidthXYPlot
   } from 'react-vis'
 export default function Chart({data, headerTitle, yRange}){
     return (
@@ -14,11 +15,11 @@ export default function Chart({data, headerTitle, yRange}){
                 <h3>{headerTitle}</h3>
             </header>
             <main>
-            <XYPlot width={800} height={300} xType="ordinal" yType="linear" yDomain={yRange} >
+            <FlexibleWidthXYPlot height={300} xType="ordinal" yType="linear" yDomain={yRange} >
             <VerticalBarSeries color="#fcc000" data={data} />
             <XAxis/>
             <YAxis title="Number of Drinks"/>
-            </XYPlot>
+            </FlexibleWidthXYPlot>
             </main>
         </div>
     )

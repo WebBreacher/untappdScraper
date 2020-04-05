@@ -3,7 +3,7 @@ import { Tooltip } from 'react-tippy'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faQuestionCircle, faWineBottle} from '@fortawesome/free-solid-svg-icons'
 import LoadingIcon from './../assets/logos/single_glass.png'
-import logoImg from './../assets/logos/logo.png'
+import logoImg from './../assets/logos/logo-untapped.png'
 import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
 import Table from './../components/Table'
 import Chart from './../components/Chart'
@@ -218,7 +218,7 @@ export default class Index extends Component {
           }
           {this.state.loading &&
             <div><img className="loadingBeer" src={LoadingIcon} alt="loadingIcon"/>
-            <span>Scrapping...</span></div>
+            <span>Scraping...</span></div>
           }
           {this.state.data && this.state.data.stats &&
             <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
