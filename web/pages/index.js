@@ -1,30 +1,13 @@
 import React, { Component } from 'react'
 import { Tooltip } from 'react-tippy'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faQuestionCircle, faWineBottle} from '@fortawesome/free-solid-svg-icons'
-import LoadingIcon from './../assets/logos/single_glass.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import LoadingIcon from './../assets/logos/single-glass.png'
 import logoImg from './../assets/logos/logo-untapped.png'
-import { getUntappdOsint, loadGoogleMapsClient, daysOfWeek, formatHour } from '../lib/utils'
+import { getUntappdOsint, loadGoogleMapsClient, formatHour } from '../lib/utils'
 import Table from './../components/Table'
 import Chart from './../components/Chart'
-// needed for styling static data on the page
-import mockData from '../mockData'
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
-
-const sortNumberEntries = (a, b) => {
-  const aNumber = parseInt(a[0], 10)
-  const bNumber = parseInt(b[0], 10)
-
-  if (aNumber < bNumber) {
-    return -1
-  }
-
-  if (aNumber > bNumber) {
-    return 1
-  }
-
-  return 0
-}
 
 const getHourPriority = (numString) => {
   const num = parseInt(numString, 10)
@@ -54,27 +37,22 @@ const sortHourEntries = (a, b) => {
   return 0
 }
 
-const sortDayEntries = (a, b) => {
-  const aIndex = daysOfWeek.indexOf(a[0])
-  const bIndex = daysOfWeek.indexOf(b[0])
+const makeChartData = (initialData, sortFn, formatX) => {
+  let entries = Object.entries(initialData)
 
-  if (aIndex < bIndex) {
-    return -1
+  if (sortFn) {
+    entries = entries.sort(sortFn)
   }
 
-  if (aIndex > bIndex) {
-    return 1
-  }
+  return entries.reduce((acc, cur) => {
+    let [x, y] = cur
 
-  return 0
-}
+    if (formatX) {
+      x = formatX(x)
+    }
 
-const makeChartData = (initialData) => {
-  const newData = Object.entries(initialData).reduce((acc, cur) => {
-    const [dayWeek, beers] = cur
-    return [...acc, {x: dayWeek, y: beers}]
+    return [...acc, { x, y }]
   }, [])
-  return newData
 }
 
 export default class Index extends Component {
@@ -191,10 +169,10 @@ export default class Index extends Component {
     const googleAPITooltip = 'Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.<br/><br/>This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.'
     return (
       <div className="container">
-        {/* TOP NAV MENU */}
         <menu className="navbar-menu">
-            <img id="logoImg" src={logoImg}/>
-          <div id="userForm">
+          <img id="logo-img" src={logoImg}/>
+
+          <div id="user-form">
             <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
               <input className="text-input" placeholder="Username" type="text" value={this.state.username} onChange={e => this.updateUsername(e) } />
               <label>Recent Activity <strong>only</strong></label>
@@ -202,54 +180,69 @@ export default class Index extends Component {
               <input className="button" type="submit" value="Scrape" disabled={this.state.submitting} />
             </form>
           </div>
-          <div id="mapsAPIForm">
+
+          <div id="maps-api-form">
             <form onSubmit={e => { this.setupGoogleMapsClient(e) }}>
-               <input className="text-input" placeholder="Google Maps API Key" type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} />
-                <Tooltip title={googleAPITooltip} position="bottom" trigger="click">
-                  <FontAwesomeIcon icon={faQuestionCircle}/>
-                </Tooltip>
+              <input className="text-input" placeholder="Google Maps API Key" type="password" value={this.state.googleMapsApiKey} onChange={e => { this.updateGoogleMapsApiKey(e) }} readOnly={this.state.googleMapsClient} />
+
+              <Tooltip title={googleAPITooltip} position="bottom" trigger="click">
+                <FontAwesomeIcon icon={faQuestionCircle}/>
+              </Tooltip>
+
               <input className="button" type="submit" value="Set" disabled={this.state.loadingGoogleMapsClient || this.state.googleMapsClient} />
             </form>
           </div>
         </menu>
+
         <main className="content">
           {this.state.error &&
             <strong>{this.state.error}</strong>
           }
+
           {this.state.loading &&
-            <div><img className="loadingBeer" src={LoadingIcon} alt="loadingIcon"/>
-            <span>Scraping...</span></div>
+            <div><img className="loading-beer" src={LoadingIcon} alt="loadingIcon"/>
+              <span>Scraping...</span></div>
           }
+
           {this.state.data && this.state.data.stats &&
-            <Table title={`User Stats for ${this.state.data.username}`} data={[{...this.state.data.stats}]}/>
+            <Table title={`User Stats for ${this.state.data.username}`} data={[{ ...this.state.data.stats }]}/>
           }
 
           {this.state.data && this.state.data.recentActivity &&
             <Table title="Recent Activity" data={this.state.data.recentActivity} valueFormatter={params => {
-              if(params.column.colId === 'time'){
+              if (params.column.colId === 'time') {
                 return params.value.format(timeFormat)
               }
-            }}/>
+            }} />
           }
 
           {this.state.data && this.state.data.venues &&
             <Table title="Venues: " data={this.state.data.venues} valueFormatter={params => {
               const venue = params.data
               const columnName = params.column.colId
-              if(columnName === 'address' && venue.geocode){
+
+              if (columnName === 'geocode') {
                 return `${venue.geocode[0].geometry.location.lat()}, ${venue.geocode[0].geometry.location.lng()}`
               }
+
               return params.value
-            }}/>
+            }} />
           }
 
           {this.state.data && this.state.data.beers &&
             <Table title="Beers:" data={this.state.data.beers} valueFormatter={params => {
               const columnName = params.column.colId
-              if(columnName === 'firstDrinkTime') return params.value.format(timeFormat)
-              if(columnName === 'lastDrinkTime') return params.value.format(timeFormat)
+
+              if (columnName === 'firstDrinkTime') {
+                return params.value.format(timeFormat)
+              }
+
+              if (columnName === 'lastDrinkTime') {
+                return params.value.format(timeFormat)
+              }
+
               return params.value
-            }}/>
+            }} />
           }
 
           <div style={{ height: (this.state.data && this.state.data.map) ? '400px' : 0 }}>
@@ -259,20 +252,19 @@ export default class Index extends Component {
           {this.state.data && this.state.data.beerAnalytics &&
             <div>
               {this.state.data && this.state.data.beerAnalytics.dayOfWeek &&
-                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Week:" data={makeChartData(this.state.data.beerAnalytics.dayOfWeek)} yRange={[0,25]}/>
+                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Week:" data={makeChartData(this.state.data.beerAnalytics.dayOfWeek)} />
               }
 
               {this.state.data && this.state.data.beerAnalytics.hourOfDay &&
-                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Hour of Day:" data={makeChartData(mockData.beerAnalytics.hourOfDay)}/>
+                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Hour of Day:" data={makeChartData(this.state.data.beerAnalytics.hourOfDay, sortHourEntries, formatHour)}/>
               }
 
               {this.state.data && this.state.data.beerAnalytics.dayOfMonth &&
-                  <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Month:" data={makeChartData(mockData.beerAnalytics.dayOfMonth)}/>
+                <Chart headerTitle="Drinking Patterns (Last 25 beers) - Day of Month:" data={makeChartData(this.state.data.beerAnalytics.dayOfMonth)}/>
               }
 
               {this.state.data && this.state.data.beerAnalytics.binges &&
-
-                <div className="bingesTable">
+                <div className="binges-table">
                   <header>
                     <h3>Binge Drink Periods (5+ drinks for men / 4+ drinks for women in &lt; 2 hours*):</h3>
                   </header>
@@ -285,6 +277,7 @@ export default class Index extends Component {
                         <th>Total Drinks</th>
                       </tr>
                     </thead>
+
                     <tbody>
                       {this.state.data.beerAnalytics.binges.map((binge, index) =>
                         <tr key={index}>
@@ -299,7 +292,7 @@ export default class Index extends Component {
               }
 
               {this.state.data && this.state.data.beerAnalytics.heavyUses &&
-                <div className="heavyUsesTable">
+                <div className="heavy-uses-table">
                   <header>
                     <h3>Heavy Alcohol Uses (5+ instances of binge drinking in the past month):</h3>
                   </header>
@@ -312,6 +305,7 @@ export default class Index extends Component {
                         <th>Total Binges</th>
                       </tr>
                     </thead>
+
                     <tbody>
                       {this.state.data.beerAnalytics.heavyUses.map((heavyUse, index) =>
                         <tr key={index}>
