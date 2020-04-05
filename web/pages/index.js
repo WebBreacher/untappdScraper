@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import { Tooltip } from 'react-tippy'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
-import LoadingIcon from './../assets/logos/single-glass.png'
+import loadingIcon from './../assets/logos/single-glass.png'
 import logoImg from './../assets/logos/logo-untapped.png'
 import { getUntappdOsint, loadGoogleMapsClient, formatHour } from '../lib/utils'
 import Table from './../components/Table'
 import Chart from './../components/Chart'
+
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
 
 const getHourPriority = (numString) => {
@@ -167,10 +168,11 @@ export default class Index extends Component {
 
   render () {
     const googleAPITooltip = 'Optionally, you can provide a valid Google Maps API key, which will enable the application to analyze the locations it finds. This key is never sent to any server other than the Google Maps API.<br/><br/>This might silently fail if the API key provided is invalid or for an account that does not have the Maps JavaScript API and Geocoding APIs enabled. Check the developer console if the Maps functionality does not work correctly after setting the API key.'
+
     return (
       <div className="container">
         <menu className="navbar-menu">
-          <img id="logo-img" src={logoImg} alt="logoImg" />
+          { true && <img id="logo-img" src={logoImg} alt="logoImg" /> }
 
           <div id="user-form">
             <form onSubmit={e => { this.getUntappdOsint(e) }} disabled={this.state.submitting}>
@@ -200,7 +202,7 @@ export default class Index extends Component {
           }
 
           {this.state.loading &&
-            <div><img className="loading-beer" src={LoadingIcon} alt="loadingIcon" />
+            <div><img className="loading-beer" src={loadingIcon} alt="loadingIcon" />
               <span>Scraping...</span></div>
           }
 

@@ -4,7 +4,7 @@
   "description": "Retrieve open-source intelligence from Untappd.com",
   "scripts": {
     "build": "next build",
-    "deploy": "next build && next export && cd .. && git add web/out && git commit -m \"Deploy gh-pages\" && git subtree push --prefix web/out origin gh-pages",
+    "deploy": "next build && next export && cd .. && touch web/out/.nojekyll && git add web/out && git commit -m \"Deploy gh-pages\" && git subtree push --prefix web/out origin gh-pages",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start"
