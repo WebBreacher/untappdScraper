@@ -1,6 +1,6 @@
 import React from 'react'
 import { AgGridReact } from 'ag-grid-react'
-import _startCase from 'lodash.startCase'
+import _startCase from 'lodash.startcase'
 import PropTypes from 'prop-types'
 
 /**
