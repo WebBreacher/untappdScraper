@@ -1,0 +1,48 @@
+{
+  "name": "untappd-scraper-web",
+  "version": "1.0.0",
+  "description": "Retrieve open-source intelligence from Untappd.com",
+  "scripts": {
+    "build": "next build",
+    "deploy": "next build && next export && cd .. && touch web/out/.nojekyll && git add web/out && git commit -m \"Deploy gh-pages\" && git subtree push --prefix web/out origin gh-pages",
+    "dev": "next dev",
+    "lint": "eslint .",
+    "start": "next start"
+  },
+  "keywords": [
+    "untappd",
+    "osint"
+  ],
+  "author": "Micah Hoffman (@WebBreacher), Brandon Evans (@BrandonMaxEvans), and Wes Braga (@wesbragagt)",
+  "license": "LicenseRef-LICENSE",
+  "repository": "github:WebBreacher/untappdScraper",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "1.2.28",
+    "@fortawesome/free-solid-svg-icons": "5.13.0",
+    "@fortawesome/react-fontawesome": "0.1.9",
+    "@googlemaps/loader": "0.0.7",
+    "@zeit/next-css": "1.0.1",
+    "ag-grid-community": "23.0.2",
+    "ag-grid-react": "23.0.2",
+    "axios": "0.19.2",
+    "cheerio": "1.0.0-rc.3",
+    "lodash.startcase": "4.4.0",
+    "moment-timezone": "0.5.28",
+    "next": "9.3.4",
+    "next-images": "1.4.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-tippy": "1.3.4",
+    "react-vis": "1.11.7"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-define": "2.0.0",
+    "eslint": "6.8.0",
+    "eslint-config-standard": "14.1.1",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-node": "11.0.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-react": "7.19.0",
+    "eslint-plugin-standard": "4.0.1"
+  }
+}
