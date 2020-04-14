@@ -2,7 +2,7 @@ const withImages = require('next-images')
 const withCSS = require('@zeit/next-css')
 const debug = process.env.NODE_ENV !== 'production';
 
-const assetPrefix = !debug ? '/untappdScraper' : ''
+const assetPrefix = !debug ? '/' : ''
 
 const config = withCSS(withImages({
   assetPrefix,
