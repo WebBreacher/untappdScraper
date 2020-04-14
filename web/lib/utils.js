@@ -116,7 +116,6 @@ export const parseRecentActivity = $ => {
       }
 
       if (parts.length === 1) {
-        console.log(checkInText)
         throw new Error('Could not parse check-in drink.')
       }
 
@@ -235,6 +234,14 @@ const parseVenues = $ => {
       lastVisitDate = firstDateText
     }
 
+    if (firstVisitDate) {
+      firstVisitDate = firstVisitDate.split('First Visit: ')[1]
+    }
+
+    if (lastVisitDate) {
+      lastVisitDate = lastVisitDate.split('Last Visit: ')[1]
+    }
+
     venues.push({
       name: nameElement.text().trim(),
       address,
@@ -258,7 +265,7 @@ const updateDrinkHistogram = (beerAnalytics, drinkTime) => {
   beerAnalytics.dayOfMonth[dayOfMonth]++
 }
 
-const analyzeBeers = (beers) => {
+const analyzeBeers = (beers, recentActivity) => {
   const beerAnalytics = {
     dayOfWeek: {},
     hourOfDay: {},
@@ -268,6 +275,7 @@ const analyzeBeers = (beers) => {
   }
 
   const uniqueDrinkTimes = []
+  const uniqueDrinkUnixTimestamps = []
 
   for (const day of daysOfWeek) {
     beerAnalytics.dayOfWeek[day] = 0
@@ -283,11 +291,24 @@ const analyzeBeers = (beers) => {
 
   for (const beer of beers) {
     uniqueDrinkTimes.push(beer.firstDrinkTime)
+    uniqueDrinkUnixTimestamps.push(beer.firstDrinkTime.unix())
     updateDrinkHistogram(beerAnalytics, beer.firstDrinkTime)
 
     if (beer.firstDrinkTime.diff(beer.lastDrinkTime) !== 0) {
       uniqueDrinkTimes.push(beer.lastDrinkTime)
+      uniqueDrinkUnixTimestamps.push(beer.lastDrinkTime.unix())
       updateDrinkHistogram(beerAnalytics, beer.lastDrinkTime)
+    }
+  }
+
+  for (const activity of recentActivity) {
+    const time = activity.time
+    const timeUnix = time.unix()
+
+    if (!uniqueDrinkUnixTimestamps.includes(timeUnix)) {
+      uniqueDrinkTimes.push(time)
+      uniqueDrinkUnixTimestamps.push(timeUnix)
+      updateDrinkHistogram(beerAnalytics, time)
     }
   }
 
@@ -313,12 +334,11 @@ const analyzeBeers = (beers) => {
   */
 
   let potentialBinge = []
-  const twoHoursSeconds = 60 * 60 * 2
 
   for (const drinkTime of uniqueDrinkTimesSorted) {
     if (potentialBinge.length === 0) {
       potentialBinge = [drinkTime]
-    } else if (drinkTime.diff(potentialBinge[potentialBinge.length - 1]) > twoHoursSeconds) {
+    } else if (drinkTime.diff(potentialBinge[potentialBinge.length - 1], 'hours') > 2) {
       if (potentialBinge.length >= 4) {
         beerAnalytics.binges.push(potentialBinge)
       }
@@ -471,7 +491,7 @@ export const getUntappdOsint = async (username, recentActivityOnly, googleMapsCl
   data.beers = parseBeers(beersDom)
   data.venues = parseVenues(venuesDom)
 
-  data.beerAnalytics = analyzeBeers(data.beers)
+  data.beerAnalytics = analyzeBeers(data.beers, data.recentActivity)
 
   if (googleMapsClient) {
     await geocodeAddresses(googleMapsClient, data.venues)

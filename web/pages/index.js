@@ -7,8 +7,10 @@ import logoImg from './../assets/logos/logo-untapped.png'
 import { getUntappdOsint, loadGoogleMapsClient, formatHour } from '../lib/utils'
 import Table from './../components/Table'
 import Chart from './../components/Chart'
+import * as moment from 'moment-timezone'
 
 const timeFormat = 'DD MMM YY HH:mm:ss Z'
+const dateFormat = 'DD MMM YY'
 
 const getHourPriority = (numString) => {
   const num = parseInt(numString, 10)
@@ -20,6 +22,33 @@ const getHourPriority = (numString) => {
   }
 
   return priority
+}
+
+const sortMoments = (a, b) => {
+  const aUnix = a.unix()
+  const bUnix = b.unix()
+
+  if (aUnix < bUnix) {
+    return -1
+  }
+
+  if (aUnix > bUnix) {
+    return 1
+  }
+
+  return 0
+}
+
+const sortVisitDates = (a, b) => {
+  if (a.firstVisitDate && b.firstVisitDate) {
+    return sortMoments(moment(a.firstVisitDate), moment(b.firstVisitDate))
+  }
+
+  if (a.lastVisitDate && b.lastVisitDate) {
+    return sortMoments(moment(a.lastVisitDate), moment(b.lastVisitDate))
+  }
+
+  return 0
 }
 
 const sortHourEntries = (a, b) => {
@@ -211,7 +240,7 @@ export default class Index extends Component {
           }
 
           {this.state.data && this.state.data.recentActivity &&
-            <Table title="Recent Activity" data={this.state.data.recentActivity} valueFormatter={params => {
+            <Table title="Recent Activity" data={this.state.data.recentActivity.sort((a, b) => sortMoments(a.time, b.time))} valueFormatter={params => {
               if (params.column.colId === 'time') {
                 return params.value.format(timeFormat)
               }
@@ -219,12 +248,19 @@ export default class Index extends Component {
           }
 
           {this.state.data && this.state.data.venues &&
-            <Table title="Venues: " data={this.state.data.venues} valueFormatter={params => {
-              const venue = params.data
+            <Table title="Venues: " data={this.state.data.venues.sort(sortVisitDates)} valueFormatter={params => {
               const columnName = params.column.colId
 
+              if (columnName === 'firstVisitDate') {
+                return params.value ? moment(params.value).format(dateFormat) : undefined
+              }
+
+              if (columnName === 'lastVisitDate') {
+                return moment(params.value).format(dateFormat)
+              }
+
               if (columnName === 'geocode') {
-                return `${venue.geocode[0].geometry.location.lat()}, ${venue.geocode[0].geometry.location.lng()}`
+                return `${params.value[0].geometry.location.lat()}, ${params.value[0].geometry.location.lng()}`
               }
 
               return params.value
@@ -232,7 +268,7 @@ export default class Index extends Component {
           }
 
           {this.state.data && this.state.data.beers &&
-            <Table title="Beers:" data={this.state.data.beers} valueFormatter={params => {
+            <Table title="Beers:" data={this.state.data.beers.sort((a, b) => sortMoments(a.firstDrinkTime, b.firstDrinkTime))} valueFormatter={params => {
               const columnName = params.column.colId
 
               if (columnName === 'firstDrinkTime') {
