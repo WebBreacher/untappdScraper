@@ -942,7 +942,7 @@ function connect(options) {
       error.name = err.name;
       error.stack = err.stack; // __NEXT_DIST_DIR is provided by webpack
 
-      (0, _sourceMapSupport.rewriteStacktrace)(error, "/mnt/c/Users/micah/Documents/GitHub/untappdScraper/web/.next");
+      (0, _sourceMapSupport.rewriteStacktrace)(error, "/Users/brandonevans/Repo/SANS/untappdScraper/web/.next");
       return error;
     }
   };

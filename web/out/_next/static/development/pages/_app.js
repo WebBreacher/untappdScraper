@@ -3680,7 +3680,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var _this = undefined,
-    _jsxFileName = "/mnt/c/Users/micah/Documents/GitHub/untappdScraper/web/pages/_app.js";
+    _jsxFileName = "/Users/brandonevans/Repo/SANS/untappdScraper/web/pages/_app.js";
 
 var __jsx = react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement;
 
@@ -3718,7 +3718,7 @@ UntappdScraperWeb.propTypes = {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! next-client-pages-loader?page=%2F_app&absolutePagePath=private-next-pages%2F_app.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2F_app&absolutePagePath=private-next-pages%2F_app.js!./");
-module.exports = __webpack_require__(/*! /mnt/c/Users/micah/Documents/GitHub/untappdScraper/web/node_modules/next/dist/client/router.js */"./node_modules/next/dist/client/router.js");
+module.exports = __webpack_require__(/*! /Users/brandonevans/Repo/SANS/untappdScraper/web/node_modules/next/dist/client/router.js */"./node_modules/next/dist/client/router.js");
 
 
 /***/ }),
