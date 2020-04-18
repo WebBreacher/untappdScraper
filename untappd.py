@@ -24,7 +24,7 @@ from geocode_api_keys import *
 
 # Parse command line input
 parser = argparse.ArgumentParser(description='Grab Untappd user activity')
-parser.add_argument('-b', '--beers', action='store_true', help='Just dump the last beers they logged')
+parser.add_argument('-r', '--recent', action='store_true', help='Just dump the locations of the last beers they logged')
 parser.add_argument('-u', '--user', required=True, help='Username to research')
 args = parser.parse_args()
 
@@ -178,7 +178,7 @@ if user:
     print('        Total Badges:  {:>6}'.format(user[2].text))
     print('        Total Friends: {:>6}'.format(user[3].text))
 
-if args.beers:
+if args.recent:
     # Just grab the beers they logged and print them
     beers = get_beersonly_data(args.user)
     for beer in beers:
