@@ -11,7 +11,9 @@ So I wondered if I could patch together some Python to scrape the [Untappd.com](
 * Where do they drink?
 * Are they "binge" drinking?
 
-The output from this (shown below), is output to the terminal/command line. One exception is that the GPS locations of all the places the user account reported consuming drinks at are written to an HTML output file in the current directory. You can double click on the HTML file and see a heat map of all the places that the person recorded drinking at. Could you infer where they worked and lived from this data? I'll let you guess.
+Originally, this was just a Python script (details are below), but some amazing people noticed it and gave it a flashy web interface (for which I'm grateful). For the web version, just visit https://untappd.osint.ninja!
+
+The output from the Python script (shown below), is output to the terminal/command line. One exception is that the GPS locations of all the places the user account reported consuming drinks at are written to an HTML output file in the current directory. You can double click on the HTML file and see a heat map of all the places that the person recorded drinking at. Could you infer where they worked and lived from this data? I'll let you guess.
 
 ## Caveats
 
@@ -19,9 +21,11 @@ Since this script scrapes the public pages:
 
 * Private Untappd profiles are not scraped
 * Without using the Untappd API and without requiring login, it only has access to the last 25 beers a target has consumed. While this doesn't sound like a lot, we can learn many things from 25 beers. And what if you ran this script every week (or day!)? Could you store all the data about a specific person on a rolling basis? Yup!
-* It uses the Google Geocoding API which you need to sign up for for the HTML output to be generated
+* It uses the Google Geocoding API which you need to sign up for for the HTML output to be generated (https://developers.google.com/maps/documentation/geocoding/intro)
 
 ## Usage
+
+For the web version, just visit https://untappd.osint.ninja!
 
 ### Requirements
 
@@ -244,6 +248,11 @@ All scripts (with a valid Google API key) should produce HTML output files that 
 ![image of sample output](example_output.png)
 
 If your web page shows "For Development Purposes Only" watermarks, you will need to edit the HTML file and add your Google API key for JavaScript Maps API. Add `key=YOUR_GOOGLE_API_KEY` to the end of the maps.googleapis.com line like this: `https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&key=YOUR_GOOGLE_API_KEY`
+
+## Thank Yous
+Really appreciate the work that the people below have put in to make this tool better! I'm very thankful for their volunteer efforts.
+- [@brandone](https://github.com/BrandonE)
+- [@wesbragagt](https://github.com/wesbragagt)
 
 ## License
 
