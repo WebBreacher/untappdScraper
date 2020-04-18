@@ -56,14 +56,14 @@ Of course this means you need to go get a valid Google Developer API key for the
 ## Help command Output
 
 ```bash
-$ python3 untappd.py -h
-usage: untappd.py [-h] [-b] -u USER
+$ python3 ./untappd.py -h
+usage: untappd.py [-h] [-r] -u USER
 
 Grab Untappd user activity
 
 optional arguments:
   -h, --help            show this help message and exit
-  -b, --beers           Just dump the last beers they logged
+  -r, --recent          Just dump the locations of the last beers they logged
   -u USER, --user USER  Username to research
 ```
 
@@ -74,9 +74,9 @@ $ python3 untappd.py -u mogford
 
 [ ] USER DATA: Requesting https://untappd.com/user/mogford
 
-        Total Beers:    6,636
-        Total Unique:   5,158
-        Total Badges:   3,421
+        Total Beers:    6,783
+        Total Unique:   5,257
+        Total Badges:   3,487
         Total Friends:     61
 
 [ ] FRIEND DATA: Requesting 25 friends from https://untappd.com/user/mogford/friends
@@ -113,13 +113,13 @@ $ python3 untappd.py -u mogford
 [*]  Drinking Patterns (Last 25 beers) - Days of Week
          Day ( #) : HISTOGRAM
         ---------------------------------
-         Mon ( 6) : xxxxxx
-         Tue ( 2) : xx
+         Mon ( 1) : x
+         Tue ( 0) :
          Wed ( 2) : xx
-         Thu ( 6) : xxxxxx
-         Fri ( 3) : xxx
-         Sat ( 6) : xxxxxx
-         Sun ( 0) :
+         Thu (12) : xxxxxxxxxxxx
+         Fri ( 6) : xxxxxx
+         Sat ( 3) : xxx
+         Sun ( 2) : xx
 
 [*]  Drinking Patterns (Last 25 beers) - Hours of Day
          Hour  ( #) : HISTOGRAM
@@ -131,18 +131,18 @@ $ python3 untappd.py -u mogford
          10:00 ( 0) :
          11:00 ( 0) :
          12:00 ( 0) :
-         13:00 ( 0) :
-         14:00 ( 0) :
-         15:00 ( 1) : x
-         16:00 ( 3) : xxx
-         17:00 ( 2) : xx
-         18:00 ( 6) : xxxxxx
-         19:00 ( 6) : xxxxxx
-         20:00 ( 0) :
-         21:00 ( 2) : xx
+         13:00 ( 1) : x
+         14:00 ( 1) : x
+         15:00 ( 0) :
+         16:00 ( 4) : xxxx
+         17:00 ( 3) : xxx
+         18:00 ( 2) : xx
+         19:00 ( 1) : x
+         20:00 ( 7) : xxxxxxx
+         21:00 ( 4) : xxxx
          22:00 ( 3) : xxx
          23:00 ( 0) :
-         00:00 ( 2) : xx
+         00:00 ( 0) :
          01:00 ( 0) :
          02:00 ( 0) :
          03:00 ( 0) :
@@ -157,19 +157,19 @@ $ python3 untappd.py -u mogford
        02  ( 0) :
        03  ( 0) :
        04  ( 0) :
-       05  ( 1) : x
-       06  ( 3) : xxx
-       07  ( 6) : xxxxxx
+       05  ( 0) :
+       06  ( 0) :
+       07  ( 0) :
        08  ( 0) :
-       09  ( 6) : xxxxxx
-       10  ( 2) : xx
-       11  ( 2) : xx
-       12  ( 5) : xxxxx
-       13  ( 0) :
+       09  ( 0) :
+       10  ( 1) : x
+       11  ( 3) : xxx
+       12  ( 2) : xx
+       13  ( 1) : x
        14  ( 0) :
-       15  ( 0) :
-       16  ( 0) :
-       17  ( 0) :
+       15  ( 2) : xx
+       16  (12) : xxxxxxxxxxxx
+       17  ( 5) : xxxxx
        18  ( 0) :
        19  ( 0) :
        20  ( 0) :
@@ -185,29 +185,27 @@ $ python3 untappd.py -u mogford
        30  ( 0) :
        31  ( 0) :
 
-[!] *ALERT - Due to drinking 6 beers on day 07, user may be a "Binge Drinker"
+[!] *ALERT - Due to drinking 12 beers on day 16, user may be a "Binge Drinker"
 [!]          Examine times they drank the beers below. If 5+ drinks in < 2 hours, then binge.
-[!]            00:30:46
-[!]            00:37:12
-[!]            16:38:47
-[!]            16:43:09
-[!]            22:49:37
-[!]            22:50:51
-[!] *ALERT - Due to drinking 6 beers on day 09, user may be a "Binge Drinker"
+[!]            13:44:52
+[!]            16:05:16
+[!]            16:20:57
+[!]            17:38:30
+[!]            17:40:08
+[!]            18:22:33
+[!]            18:23:50
+[!]            20:35:06
+[!]            20:36:48
+[!]            21:22:47
+[!]            22:29:18
+[!]            22:30:32
+[!] *ALERT - Due to drinking 5 beers on day 17, user may be a "Binge Drinker"
 [!]          Examine times they drank the beers below. If 5+ drinks in < 2 hours, then binge.
-[!]            18:28:06
-[!]            18:48:30
-[!]            19:11:08
-[!]            19:24:42
-[!]            19:54:11
-[!]            21:05:57
-[!] *ALERT - Due to drinking 5 beers on day 12, user may be a "Binge Drinker"
-[!]          Examine times they drank the beers below. If 5+ drinks in < 2 hours, then binge.
-[!]            18:10:55
-[!]            18:31:20
-[!]            19:09:16
-[!]            19:42:00
-[!]            21:17:15
+[!]            16:58:04
+[!]            20:05:16
+[!]            20:06:58
+[!]            20:57:54
+[!]            21:45:47
 [!]      * This script does not examine the amount of time between drinks, which is important.
 [!]      * https://www.niaaa.nih.gov/alcohol-health/overview-alcohol-consumption/moderate-binge-drinking
 
