@@ -15,7 +15,7 @@ So I wondered if I could patch together some Python to scrape the [Untappd.com](
 * Where do they drink?
 * Are they "binge" drinking?
 
-Originally, this was just a Python script (details are below), but some amazing people noticed it and gave it a flashy web interface (for which I'm grateful). For the web version, just visit https://untappd.osint.ninja!
+Originally, this was just a Python script (details are below), but some amazing people noticed it and gave it a [flashy web interface](web) (for which I'm grateful). For the web version, just visit https://untappd.osint.ninja!
 
 The output from the Python script (shown below), is output to the terminal/command line. One exception is that the GPS locations of all the places the user account reported consuming drinks at are written to an HTML output file in the current directory. You can double click on the HTML file and see a heat map of all the places that the person recorded drinking at. Could you infer where they worked and lived from this data? I'll let you guess.
 

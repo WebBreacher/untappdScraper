@@ -2,33 +2,60 @@
 
 Web application version of [untappdScraper](https://github.com/WebBreacher/untappdScraper).
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app).
+## Installing Prerequisites
 
-## Getting Started
+* [Node.js / NPM](https://nodejs.org/en/download/)
 
-First, run the development server:
+## Running Locally
 
 ```bash
+cd app
+npm install
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be started on HTTP port 3000. It will automatically reload when code changes are made.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Creating a Production Build
 
-## Learn More
+```bash
+cd app
+npm install
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Running the Production Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd app
+npm install
+npm start -- -p 3000 # The port defaults to 3000 if not provided. Running on reserved ports requires sudo.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/zeit/next.js/) - your feedback and contributions are welcome!
+## Deploying to GitHub Pages
 
-## Deploy on ZEIT Now
+```bash
+cd app
+npm install
+npm run deploy
+```
 
-The easiest way to deploy your Next.js app is to use the [ZEIT Now Platform](https://zeit.co/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The application should now be available at https://YOUR_GITHUB_USERNAME.github.io/untappdScraper/
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Linting the Application
+
+The following will detect code flaws using [eslint](https://eslint.org/):
+
+```bash
+cd app
+npm install
+npm run lint
+```
+
+The following will attempt to automatically fix the detected code flaws:
+
+```bash
+cd app
+npm install
+npm run lint -- --fix
+```
