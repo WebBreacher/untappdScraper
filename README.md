@@ -1,6 +1,8 @@
 # untappdScraper
 
 ## Now running at https://untappd.osint.ninja
+[![Open Source](https://img.shields.io/badge/Open%20Source-100%25-green.svg)](https://shields.io/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-Yes-green.svg)](https://github.com/GetStream/winds/graphs/commit-activity)
 
 ## Intro
 
