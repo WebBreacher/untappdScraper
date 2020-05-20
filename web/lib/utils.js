@@ -4,7 +4,7 @@ import * as moment from 'moment-timezone'
 import { Loader } from '@googlemaps/loader'
 
 export const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const baseUrl = 'https://cors-anywhere.herokuapp.com/https://untappd.com'
+const baseUrl = 'https://api.allorigins.win/get?url=https://untappd.com'
 
 const timeToMomentWithTimezone = (time) => {
   const offset = moment(time).format('Z')
@@ -20,41 +20,41 @@ const timeToMomentWithTimezone = (time) => {
 const getUserDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}`)
 
-  if (res.status !== 200) {
+  if (res.data.status.http_code !== 200) {
     throw new Error('Could not fetch user data.')
   }
 
-  return cheerio.load(res.data)
+  return cheerio.load(res.data.contents)
 }
 
 const getFriendsDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}/friends`)
 
-  if (res.status !== 200) {
+  if (res.data.status.http_code !== 200) {
     throw new Error('Could not fetch friends data.')
   }
 
-  return cheerio.load(res.data)
+  return cheerio.load(res.data.contents)
 }
 
 const getBeersDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}/beers`)
 
-  if (res.status !== 200) {
+  if (res.data.status.http_code !== 200) {
     throw new Error('Could not fetch beers data.')
   }
 
-  return cheerio.load(res.data)
+  return cheerio.load(res.data.contents)
 }
 
 const getVenuesDom = async username => {
   const res = await axios.get(`${baseUrl}/user/${username}/venues?type=&sort=highest_checkin`)
 
-  if (res.status !== 200) {
+  if (res.data.status.http_code !== 200) {
     throw new Error('Could not fetch venue data.')
   }
 
-  return cheerio.load(res.data)
+  return cheerio.load(res.data.contents)
 }
 
 const parseNumber = num =>
