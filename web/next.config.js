@@ -4,10 +4,11 @@ const debug = process.env.NODE_ENV !== 'production'
 
 const config = withCSS(withImages({
   webpack (config, options) {
+    config.output.publicPath = !debug ?
+      `/untappdScraper${config.output.publicPath}` : config.output.publicPath;
+    config.assetPrefix = !debug ? '/untappdScraper/' : ''
     return config
   }
 }))
-
-config.assetPrefix = !debug ? '/untappdScraper/' : ''
 
 module.exports = config
