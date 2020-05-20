@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Helmet } from "react-helmet";
 import { Tooltip } from 'react-tippy'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
@@ -200,6 +201,9 @@ export default class Index extends Component {
 
     return (
       <div className="container">
+        <Helmet>
+          <title>untappdScraper</title>
+        </Helmet>
         <menu className="navbar-menu">
           { true && <img id="logo-img" src={logoImg} alt="logoImg" /> }
 
