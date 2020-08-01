@@ -4,4 +4,4 @@
 geocode_api_keys.py
 .vscode
 __pycache__
-
+*.html
